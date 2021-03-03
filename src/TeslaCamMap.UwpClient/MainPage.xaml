@@ -8,7 +8,12 @@
     mc:Ignorable="d"
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:vm="using:TeslaCamMap.UwpClient.ViewModels"
+    xmlns:converters="using:TeslaCamMap.UwpClient.Converters"
+    xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System"    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:BusyLabelConverter x:Key="BusyLabelConverter" />
+    </Page.Resources>
     <Page.DataContext>
         <vm:MainViewModel />
     </Page.DataContext>
@@ -27,7 +32,15 @@
                 <Button VerticalAlignment="Center" Command="{Binding PickFolderCommand}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED25;"/>
                 </Button>
-                <TextBlock Margin="5" VerticalAlignment="Center">Pick folder..</TextBlock>
+                <TextBlock Margin="5" VerticalAlignment="Center">
+                    <TextBlock.Text>
+                        <Binding Path="IsBusy" Converter="{StaticResource BusyLabelConverter}">
+                            <Binding.ConverterParameter>
+                                <x:String>Loading ...|Pick a folder</x:String>
+                            </Binding.ConverterParameter>
+                        </Binding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
         </Grid>
     </Grid>
