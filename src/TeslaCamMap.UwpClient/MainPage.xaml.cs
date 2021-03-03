@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TeslaCamMap.UwpClient.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
@@ -33,6 +35,12 @@ namespace TeslaCamMap.UwpClient
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(EventDetailsPage));
+        }
+
+        private void MapControl_MapElementClick(MapControl sender, MapElementClickEventArgs args)
+        {
+            MapElement clickedItem = args.MapElements.First();
+            ((MainViewModel)DataContext).OnMapElementClicked(clickedItem);
         }
     }
 }

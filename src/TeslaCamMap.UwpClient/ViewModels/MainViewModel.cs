@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
@@ -28,8 +29,18 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private TeslaEvent _selectedTeslaEvent;
+        public TeslaEvent SelectedTeslaEvent
+        {
+            get { return _selectedTeslaEvent; }
+            set
+            {
+                _selectedTeslaEvent = value;
+                OnPropertyChanged();
+            }
+        }
 
-        private ObservableCollection<MapLayer> _teslaEventMapLayer { get; set; }
+        private ObservableCollection<MapLayer> _teslaEventMapLayer;
         public ObservableCollection<MapLayer> TeslaEventMapLayer
         {
             get { return _teslaEventMapLayer; }
@@ -51,6 +62,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
         private bool CanPickFolderCommandExecute(object arg)
         {
             return !IsBusy;
+        }
+
+        internal void OnMapElementClicked(MapElement clickedItem)
+        {
+            SelectedTeslaEvent = (TeslaEvent)clickedItem.Tag;
         }
 
         private async void PickFolderCommandExecute(object obj)

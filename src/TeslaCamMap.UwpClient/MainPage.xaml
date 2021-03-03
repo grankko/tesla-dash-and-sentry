@@ -9,7 +9,6 @@
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:vm="using:TeslaCamMap.UwpClient.ViewModels"
     xmlns:converters="using:TeslaCamMap.UwpClient.Converters"
-    xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System"    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <converters:BusyLabelConverter x:Key="BusyLabelConverter" />
@@ -25,9 +24,14 @@
         
         <maps:MapControl Grid.Row="0"
                          MapServiceToken="blZUM4oxWRB63DRW5wVT~QuicHoTczOcLusxVvXtoUA~AmHXiEOyNXCbK5rM1dQbXsYq4tu1rn3lBsnvhB7eyBRTTZiz9O3OsgjcU8ZOE_0I"
-                         Layers="{Binding TeslaEventMapLayer}" />
+                         Layers="{Binding TeslaEventMapLayer}"
+                         MapElementClick="MapControl_MapElementClick"/>
         
         <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Button VerticalAlignment="Center" Command="{Binding PickFolderCommand}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED25;"/>
@@ -41,6 +45,10 @@
                         </Binding>
                     </TextBlock.Text>
                 </TextBlock>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <TextBlock Text="{Binding Path=SelectedTeslaEvent.City}" />
+                <TextBlock Text="{Binding Path=SelectedTeslaEvent.TimeStamp}" />
             </StackPanel>
         </Grid>
     </Grid>
