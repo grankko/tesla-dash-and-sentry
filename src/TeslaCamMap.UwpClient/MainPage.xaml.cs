@@ -29,9 +29,6 @@ namespace TeslaCamMap.UwpClient
             this.InitializeComponent();
         }
 
-        //todo: Center map zoom around 
-        //await ActivityMap.TrySetViewBoundsAsync(GeoboundingBox.TryCompute(geopositions), null, MapAnimationKind.None);
-
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(EventDetailsPage));
@@ -41,8 +38,6 @@ namespace TeslaCamMap.UwpClient
         {
             MapIcon clickedItem = (MapIcon)args.MapElements.First();
             ((MainViewModel)DataContext).OnMapElementClicked(clickedItem);
-            //TeslaEventMap.Center = clickedItem.Location;
-            //TeslaEventMap.ZoomLevel = 15;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

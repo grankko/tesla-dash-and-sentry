@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.ViewModels;
 using Windows.Foundation;
@@ -25,12 +26,15 @@ namespace TeslaCamMap.UwpClient
     /// </summary>
     public sealed partial class EventDetailsPage : Page
     {
+        private const int BufferSizeInBytes = 1048576;
+
         private FFmpegInteropMSS _leftFfmpegInterop;
         private FFmpegInteropMSS _frontFfmpegInterop;
         private FFmpegInteropMSS _rightFfmpegInterop;
         private FFmpegInteropMSS _backFfmpegInterop;
 
         private DispatcherTimer _timer;
+        private List<MediaPlayerElement> _players = new List<MediaPlayerElement>();
 
         public EventDetailsPage()
         {
@@ -38,6 +42,11 @@ namespace TeslaCamMap.UwpClient
             _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromMilliseconds(500);
             _timer.Tick += _timer_Tick;
+
+            _players.Add(LeftPlayer);
+            _players.Add(FrontPlayer);
+            _players.Add(RightPlayer);
+            _players.Add(BackPlayer);
         }
 
         private void _timer_Tick(object sender, object e)
@@ -45,80 +54,76 @@ namespace TeslaCamMap.UwpClient
             VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            this.DataContext = new EventDetailsViewModel((UwpTeslaEvent)e.Parameter);
+            var vm = new EventDetailsViewModel((UwpTeslaEvent)e.Parameter);
+            this.DataContext = vm;
 
-            var model = (UwpTeslaEvent)e.Parameter;
+            vm.PlayVideo += Vm_PlayVideo;
+            vm.PauseVideo += Vm_PauseVideo;
+            vm.LoadClip += Vm_LoadClip;
 
-            var leftFile = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Lib.Model.Camera.LeftRepeater).OrderBy(c => c.FileName).First();
-            var rightFile = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Lib.Model.Camera.RightRepeater).OrderBy(c => c.FileName).First();
-            var frontFile = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Lib.Model.Camera.Front).OrderBy(c => c.FileName).First();
-            var backFile = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Lib.Model.Camera.Back).OrderBy(c => c.FileName).First();
-            
+            vm.OnNavigated();
+        }
+
+        private void Vm_LoadClip(object sender, LoadClipEventArgs e)
+        {
+            VideoSlider.Value = 0;
+            foreach (var clip in e.Clip.Clips)
+                LoadClip(clip);
+        }
+
+        private async void LoadClip(UwpClip clip)
+        {
             FFmpegInteropConfig conf = new FFmpegInteropConfig();
-            conf.DefaultBufferTime = TimeSpan.FromSeconds(60);
+            conf.StreamBufferSize = BufferSizeInBytes;
 
-            using (var stream = await leftFile.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
-                _leftFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                LeftPlayer.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
-
-                VideoSlider.Minimum = 0;
-                VideoSlider.Maximum = _leftFfmpegInterop.Duration.TotalSeconds;
-            }
-
-            using (var stream = await rightFile.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
-            {
-                _rightFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                RightPlayer.Source = _rightFfmpegInterop.CreateMediaPlaybackItem();
-            }
-
-            using (var stream = await frontFile.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
-            {
-                _frontFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                FrontPlayer.Source = _frontFfmpegInterop.CreateMediaPlaybackItem();
-            }
-
-            using (var stream = await backFile.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
-            {
-                _backFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                BackPlayer.Source = _backFfmpegInterop.CreateMediaPlaybackItem();
+                switch (clip.Camera)
+                {
+                    case Camera.LeftRepeater:
+                        _leftFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+                        LeftPlayer.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
+                        VideoSlider.Minimum = 0;
+                        VideoSlider.Maximum = _leftFfmpegInterop.Duration.TotalSeconds;
+                        break;
+                    case Camera.Front:
+                        _frontFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+                        FrontPlayer.Source = _frontFfmpegInterop.CreateMediaPlaybackItem();
+                        break;
+                    case Camera.RightRepeater:
+                        _rightFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+                        RightPlayer.Source = _rightFfmpegInterop.CreateMediaPlaybackItem();
+                        break;
+                    case Camera.Back:
+                        _backFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+                        BackPlayer.Source = _backFfmpegInterop.CreateMediaPlaybackItem();
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
             }
         }
 
-        private void PlayButton_Click(object sender, RoutedEventArgs e)
+        private void Vm_PauseVideo(object sender, EventArgs e)
         {
-            LeftPlayer.MediaPlayer.Play();
-            FrontPlayer.MediaPlayer.Play();
-            RightPlayer.MediaPlayer.Play();
-            BackPlayer.MediaPlayer.Play();
-
-            _timer.Start();
-        }
-
-        private void PauseButton_Click(object sender, RoutedEventArgs e)
-        {
-            LeftPlayer.MediaPlayer.Pause();
-            FrontPlayer.MediaPlayer.Pause();
-            RightPlayer.MediaPlayer.Pause();
-            BackPlayer.MediaPlayer.Pause();
+            _players.ForEach(p => p.MediaPlayer.Pause());
 
             _timer.Stop();
         }
 
-        private void BackToMapButton_Click(object sender, RoutedEventArgs e)
+        private void Vm_PlayVideo(object sender, EventArgs e)
         {
-            this.Frame.Navigate(typeof(MainPage));
+            _players.ForEach(p => p.MediaPlayer.Play());
+
+            _timer.Start();
         }
 
         private void VideoSlider_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
-            LeftPlayer.MediaPlayer.Pause();
-            FrontPlayer.MediaPlayer.Pause();
-            RightPlayer.MediaPlayer.Pause();
-            BackPlayer.MediaPlayer.Pause();
+            _players.ForEach(p => p.MediaPlayer.Pause());
 
             _timer.Stop();
         }
@@ -126,22 +131,24 @@ namespace TeslaCamMap.UwpClient
         private void VideoSlider_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             var newValue = VideoSlider.Value;
-            LeftPlayer.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue);
-            FrontPlayer.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue);
-            RightPlayer.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue);
-            BackPlayer.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue);
+            _players.ForEach(p => p.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue));
 
-            LeftPlayer.MediaPlayer.Play();
-            FrontPlayer.MediaPlayer.Play();
-            RightPlayer.MediaPlayer.Play();
-            BackPlayer.MediaPlayer.Play();
-
-            _timer.Start();
+            var vm = (EventDetailsViewModel)this.DataContext;
+            if (vm.IsPlaying)
+            {
+                vm.PlayVideoCommand.Execute(null);
+                _timer.Start();
+            }
         }
 
         private void ClipsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ClipsListView.ScrollIntoView(ClipsListView.SelectedItem);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((EventDetailsViewModel)DataContext).ViewFrame = this.Frame;
         }
     }
 }

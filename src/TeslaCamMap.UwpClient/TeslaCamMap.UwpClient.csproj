@@ -129,11 +129,13 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\Clip.Uwp.cs" />
+    <Compile Include="Model\UwpClip.cs" />
     <Compile Include="Model\UwpTeslaEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\FileSystemService.cs" />
+    <Compile Include="ViewModels\ClipViewModel.cs" />
     <Compile Include="ViewModels\EventDetailsViewModel.cs" />
+    <Compile Include="ViewModels\LoadClipEventArgs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>

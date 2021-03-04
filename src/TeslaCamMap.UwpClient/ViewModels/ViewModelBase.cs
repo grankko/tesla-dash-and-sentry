@@ -11,7 +11,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
-        public Frame ViewFrame { get; set; } // todo: introcude navigation service
+        public Frame ViewFrame { get; set; } // todo: introduce navigation service
 
         public event PropertyChangedEventHandler PropertyChanged;
 

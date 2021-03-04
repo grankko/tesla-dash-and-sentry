@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    Loaded="Page_Loaded"
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
@@ -38,7 +39,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15">
-                <Button x:Name="BackToMapButton" VerticalAlignment="Center" Click="BackToMapButton_Click">
+                <Button Command="{Binding Path=NavigateToMapCommand}" VerticalAlignment="Center">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE826;"/>
                 </Button>
                 <TextBlock  Margin="5" VerticalAlignment="Center" Text="Back to map" />
@@ -48,11 +49,11 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
                     <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousClipCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;"/>
-                    </Button>                    
-                    <Button x:Name="PlayButton" VerticalAlignment="Center" Click="PlayButton_Click" Margin="2">
+                    </Button>
+                    <Button VerticalAlignment="Center" Command="{Binding Path=PlayVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                     </Button>
-                    <Button x:Name="PauseButton" VerticalAlignment="Center" Click="PauseButton_Click" Margin="2">
+                    <Button VerticalAlignment="Center" Command="{Binding Path=PauseVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE769;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=NextClipCommand}" Margin="2">
@@ -66,7 +67,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock FontWeight="Bold" Text="Video files" Margin="5" />
-                <ListView x:Name="ClipsListView" Grid.Row="1" ItemsSource="{Binding Path=Clips}" SelectedItem="{Binding Path=CurrentClip}" SelectionMode="Single" SelectionChanged="ClipsListView_SelectionChanged">
+                <ListView x:Name="ClipsListView" Grid.Row="1" ItemsSource="{Binding Path=Clips}" SelectedItem="{Binding Path=CurrentClip, Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ClipsListView_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Path=FileName}" />

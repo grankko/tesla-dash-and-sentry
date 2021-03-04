@@ -80,7 +80,7 @@ namespace TeslaCamMap.UwpClient.Services
 
             foreach (var eventFolderFile in eventFolderFiles)
                 if (eventFolderFile.FileType.Equals(".mp4", StringComparison.InvariantCultureIgnoreCase))
-                    teslaEvent.Clips.Add(ParseClipFile(eventFolderFile));
+                    teslaEvent.Clips.Add(ParseClipFile(eventFolderFile, teslaEvent));
 
             return teslaEvent;
         }
@@ -93,8 +93,7 @@ namespace TeslaCamMap.UwpClient.Services
             return result;
         }
 
-        private static UwpClip ParseClipFile(StorageFile clipFile
-            )
+        private static UwpClip ParseClipFile(StorageFile clipFile, UwpTeslaEvent teslaEvent)
         {
             var clip = new UwpClip();
             if (clipFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))

@@ -20,7 +20,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly int _defaultZoomLevel = 15;
+        private const int DefaultZoomLevel = 15;
 
 
         private FileSystemService _fileSystemService;
@@ -79,8 +79,8 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 _selectedTeslaEvent = value;
                 OnPropertyChanged();
 
-                if (MapZoom < _defaultZoomLevel)
-                    MapZoom = _defaultZoomLevel;
+                if (MapZoom < DefaultZoomLevel)
+                    MapZoom = DefaultZoomLevel;
 
                 MapCenter = _selectedTeslaEvent.EventMapIcon.Location;
             }
