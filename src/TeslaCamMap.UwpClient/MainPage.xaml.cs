@@ -27,6 +27,7 @@ namespace TeslaCamMap.UwpClient
         public MainPage()
         {
             this.InitializeComponent();
+            //TeslaEventMap.MapServiceToken = "blZUM4oxWRB63DRW5wVT~QuicHoTczOcLusxVvXtoUA~AmHXiEOyNXCbK5rM1dQbXsYq4tu1rn3lBsnvhB7eyBRTTZiz9O3OsgjcU8ZOE_0I";
         }
 
         //todo: Center map zoom around 
@@ -46,6 +47,7 @@ namespace TeslaCamMap.UwpClient
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ((MainViewModel)DataContext).ViewFrame = this.Frame;
+            ((MainViewModel)DataContext).OnLoaded();
         }
     }
 }

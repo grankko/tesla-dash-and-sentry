@@ -31,7 +31,8 @@
         </Grid.ColumnDefinitions>
         
         <maps:MapControl Grid.Row="0"
-                         MapServiceToken="blZUM4oxWRB63DRW5wVT~QuicHoTczOcLusxVvXtoUA~AmHXiEOyNXCbK5rM1dQbXsYq4tu1rn3lBsnvhB7eyBRTTZiz9O3OsgjcU8ZOE_0I"
+                         x:Name="TeslaEventMap"
+                         MapServiceToken="{Binding Path=BingMapServiceToken}"
                          Layers="{Binding TeslaEventMapLayer}"
                          MapElementClick="MapControl_MapElementClick"/>
 

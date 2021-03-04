@@ -33,6 +33,18 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private string _bingMapServiceToken;
+        public string BingMapServiceToken
+        {
+            get { return _bingMapServiceToken; }
+            set
+            {
+                _bingMapServiceToken = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private UwpTeslaEvent _selectedTeslaEvent;
         public UwpTeslaEvent SelectedTeslaEvent
         {
@@ -86,7 +98,6 @@ namespace TeslaCamMap.UwpClient.ViewModels
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
 
-
             this.PropertyChanged += MainViewModel_PropertyChanged;
         }
 
@@ -112,10 +123,17 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 SelectedTeslaEventThumb = await _fileSystemService.LoadImageFromStorageFile(SelectedTeslaEvent.ThumbnailFile);
         }
 
+        //todo: hack
         public void OnMapElementClicked(MapElement clickedItem)
         {
             var teslaEvent = (UwpTeslaEvent)clickedItem.Tag;
             SelectedTeslaEvent = teslaEvent;
+        }
+
+        //todo: hack
+        public async void OnLoaded()
+        {
+            BingMapServiceToken = await _fileSystemService.GetStringFromApplicationFile("bing_key");
         }
 
         private async void PickFolderCommandExecute(object obj)

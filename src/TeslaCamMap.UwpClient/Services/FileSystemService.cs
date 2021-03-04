@@ -85,6 +85,14 @@ namespace TeslaCamMap.UwpClient.Services
             return teslaEvent;
         }
 
+        public async Task<string> GetStringFromApplicationFile(string path)
+        {
+            var fullPath = $"ms-appx:///{path}";
+            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(fullPath));
+            var result = await FileIO.ReadTextAsync(file);
+            return result;
+        }
+
         private static UwpClip ParseClipFile(StorageFile clipFile
             )
         {
