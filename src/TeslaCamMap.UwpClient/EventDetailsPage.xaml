@@ -29,7 +29,6 @@
             <MediaPlayerElement Grid.Row="0" Grid.Column="1" Name="FrontPlayer" />
             <MediaPlayerElement Grid.Row="0" Grid.Column="2" Name="RightPlayer" />
             <MediaPlayerElement Grid.Row="1" Grid.Column="1" Name="BackPlayer" />
-
         </Grid>
 
         <Grid Grid.Row="1">

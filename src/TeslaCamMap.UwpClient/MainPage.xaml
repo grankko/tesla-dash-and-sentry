@@ -63,8 +63,10 @@
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding Path=SelectedFolderLabelText}"  VerticalAlignment="Center" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button VerticalAlignment="Center" Command="{Binding PickFolderCommand}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED25;"/>
                     </Button>
@@ -72,17 +74,18 @@
                         <TextBlock.Text>
                             <Binding Path="IsBusy" Converter="{StaticResource BusyLabelConverter}">
                                 <Binding.ConverterParameter>
-                                    <x:String>Loading ...|Pick a folder</x:String>
+                                    <x:String>Loading ...|Open Tesla Cam folder</x:String>
                                 </Binding.ConverterParameter>
                             </Binding>
                         </TextBlock.Text>
                     </TextBlock>
+                    <ProgressRing IsActive="{Binding Path=IsBusy}" />
                 </StackPanel>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button VerticalAlignment="Center" Command="{Binding Path=ViewVideoCommand}" CommandParameter="{Binding Path=SelectedTeslaEvent}">
+                <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button VerticalAlignment="Center" Command="{Binding Path=ViewVideoCommand}" CommandParameter="{Binding Path=SelectedTeslaEvent}" Visibility="{Binding Path=SelectedTeslaEvent, Converter={StaticResource VisibilityConverter}}">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE714;"/>
                     </Button>
-                    <TextBlock  Margin="5" VerticalAlignment="Center" Text="View video" />
+                    <TextBlock  Margin="5" VerticalAlignment="Center" Text="View video" Visibility="{Binding Path=SelectedTeslaEvent, Converter={StaticResource VisibilityConverter}}" />
                 </StackPanel>
             </Grid>
             <Grid Grid.Column="1" Margin="5">

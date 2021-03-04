@@ -29,11 +29,6 @@ namespace TeslaCamMap.UwpClient
             this.InitializeComponent();
         }
 
-        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(EventDetailsPage));
-        }
-
         private void MapControl_MapElementClick(MapControl sender, MapElementClickEventArgs args)
         {
             MapIcon clickedItem = (MapIcon)args.MapElements.First();

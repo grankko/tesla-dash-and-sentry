@@ -69,6 +69,16 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private string _selectedFolderLabelText;
+        public string SelectedFolderLabelText
+        {
+            get { return _selectedFolderLabelText; }
+            set
+            {
+                _selectedFolderLabelText = value;
+                OnPropertyChanged();
+            }
+        }
 
         private UwpTeslaEvent _selectedTeslaEvent;
         public UwpTeslaEvent SelectedTeslaEvent
@@ -164,6 +174,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public async void OnLoaded()
         {
             BingMapServiceToken = await _fileSystemService.GetStringFromApplicationFile("bing_key");
+            SelectedFolderLabelText = "No folder selected";
         }
 
         private async void PickFolderCommandExecute(object obj)
@@ -178,11 +189,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
             if (result != null)
             {
                 IsBusy = true;
-                var files = await result.GetFilesAsync(CommonFileQuery.OrderByName);
                 var folders = await result.GetFoldersAsync();
 
                 var events = await _fileSystemService.ParseFiles(folders);
                 TeslaEvents = new ObservableCollection<UwpTeslaEvent>(events);
+
+                SelectedFolderLabelText = $"{result.Path} - {TeslaEvents.Count} events found.";
 
                 //todo: databind and do this stuff in a IValueConverter instead?
                 TeslaEventMapLayer = new ObservableCollection<MapLayer>();
