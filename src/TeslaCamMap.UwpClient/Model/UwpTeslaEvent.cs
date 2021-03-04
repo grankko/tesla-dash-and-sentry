@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using Windows.Storage;
+using Windows.UI.Xaml.Controls.Maps;
 
 namespace TeslaCamMap.UwpClient.Model
 {
@@ -15,5 +16,6 @@ namespace TeslaCamMap.UwpClient.Model
         }
 
         public IStorageFile ThumbnailFile { get; set; }
+        public MapIcon EventMapIcon { get; set; }
     }
 }

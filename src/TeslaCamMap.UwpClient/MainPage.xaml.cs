@@ -39,8 +39,10 @@ namespace TeslaCamMap.UwpClient
 
         private void MapControl_MapElementClick(MapControl sender, MapElementClickEventArgs args)
         {
-            MapElement clickedItem = args.MapElements.First();
+            MapIcon clickedItem = (MapIcon)args.MapElements.First();
             ((MainViewModel)DataContext).OnMapElementClicked(clickedItem);
+            //TeslaEventMap.Center = clickedItem.Location;
+            //TeslaEventMap.ZoomLevel = 15;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

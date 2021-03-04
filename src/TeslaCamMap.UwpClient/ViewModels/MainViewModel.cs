@@ -20,7 +20,32 @@ namespace TeslaCamMap.UwpClient.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly int _defaultZoomLevel = 15;
+
+
         private FileSystemService _fileSystemService;
+
+        private int _mapZoom;
+        public int MapZoom
+        {
+            get { return _mapZoom; }
+            set
+            {
+                _mapZoom = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Geopoint _mapCenter;
+        public Geopoint MapCenter
+        {
+            get { return _mapCenter; }
+            set
+            {
+                _mapCenter = value;
+                OnPropertyChanged();
+            }
+        }
 
         private bool _isBusy;
         public bool IsBusy
@@ -53,6 +78,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
             {
                 _selectedTeslaEvent = value;
                 OnPropertyChanged();
+
+                if (MapZoom < _defaultZoomLevel)
+                    MapZoom = _defaultZoomLevel;
+
+                MapCenter = _selectedTeslaEvent.EventMapIcon.Location;
             }
         }
 
@@ -154,7 +184,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 var events = await _fileSystemService.ParseFiles(folders);
                 TeslaEvents = new ObservableCollection<UwpTeslaEvent>(events);
 
-                //todo: do this stuff in a IValueConverter instead?
+                //todo: databind and do this stuff in a IValueConverter instead?
                 TeslaEventMapLayer = new ObservableCollection<MapLayer>();
                 var layer = new MapElementsLayer();
                 foreach (var teslaEvent in events)
@@ -163,6 +193,8 @@ namespace TeslaCamMap.UwpClient.ViewModels
                     eventMapIcon.Location = new Geopoint(new BasicGeoposition() { Latitude = teslaEvent.EstimatedLatitude, Longitude = teslaEvent.EstimatedLongitude });
                     eventMapIcon.Tag = teslaEvent;
                     layer.MapElements.Add(eventMapIcon);
+
+                    teslaEvent.EventMapIcon = eventMapIcon;
                 }
                 TeslaEventMapLayer.Add(layer);
             }

@@ -34,6 +34,8 @@
                          x:Name="TeslaEventMap"
                          MapServiceToken="{Binding Path=BingMapServiceToken}"
                          Layers="{Binding TeslaEventMapLayer}"
+                         Center="{Binding Path=MapCenter, Mode=TwoWay}"
+                         ZoomLevel="{Binding Path=MapZoom, Mode=TwoWay}"
                          MapElementClick="MapControl_MapElementClick"/>
 
         <Grid Grid.Row="0" Grid.Column="1"  Margin="5">
