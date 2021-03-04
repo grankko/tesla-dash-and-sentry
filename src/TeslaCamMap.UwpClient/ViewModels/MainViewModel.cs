@@ -6,11 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Commands;
+using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
 using Windows.Storage.Pickers;
 using Windows.Storage.Search;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.ViewModels
 {
@@ -29,13 +33,24 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
-        private TeslaEvent _selectedTeslaEvent;
-        public TeslaEvent SelectedTeslaEvent
+        private UwpTeslaEvent _selectedTeslaEvent;
+        public UwpTeslaEvent SelectedTeslaEvent
         {
             get { return _selectedTeslaEvent; }
             set
             {
                 _selectedTeslaEvent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private BitmapImage _selectedTeslaEventThumb;
+        public BitmapImage SelectedTeslaEventThumb
+        {
+            get { return _selectedTeslaEventThumb; }
+            set
+            {
+                _selectedTeslaEventThumb = value;
                 OnPropertyChanged();
             }
         }
@@ -51,12 +66,38 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private ObservableCollection<UwpTeslaEvent> _teslaEvents;
+        public ObservableCollection<UwpTeslaEvent> TeslaEvents
+        {
+            get { return _teslaEvents; }
+            set
+            {
+                _teslaEvents = value;
+                OnPropertyChanged();
+            }
+        }
+
         public RelayCommand PickFolderCommand { get; set; }
+        public RelayCommand ViewVideoCommand { get; set; }
 
         public MainViewModel()
         {
             _fileSystemService = new FileSystemService();
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
+            ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
+
+
+            this.PropertyChanged += MainViewModel_PropertyChanged;
+        }
+
+        private bool CanViewVideoCommandExecute(object arg)
+        {
+            return SelectedTeslaEvent != null;
+        }
+
+        private void ViewVideoCommandExecute(object obj)
+        {
+            ViewFrame.Navigate(typeof(EventDetailsPage), obj);
         }
 
         private bool CanPickFolderCommandExecute(object arg)
@@ -64,9 +105,17 @@ namespace TeslaCamMap.UwpClient.ViewModels
             return !IsBusy;
         }
 
-        internal void OnMapElementClicked(MapElement clickedItem)
+        // todo: this is a hack
+        private async void MainViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            SelectedTeslaEvent = (TeslaEvent)clickedItem.Tag;
+            if (e.PropertyName == nameof(SelectedTeslaEvent))
+                SelectedTeslaEventThumb = await _fileSystemService.LoadImageFromStorageFile(SelectedTeslaEvent.ThumbnailFile);
+        }
+
+        public void OnMapElementClicked(MapElement clickedItem)
+        {
+            var teslaEvent = (UwpTeslaEvent)clickedItem.Tag;
+            SelectedTeslaEvent = teslaEvent;
         }
 
         private async void PickFolderCommandExecute(object obj)
@@ -85,7 +134,9 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 var folders = await result.GetFoldersAsync();
 
                 var events = await _fileSystemService.ParseFiles(folders);
+                TeslaEvents = new ObservableCollection<UwpTeslaEvent>(events);
 
+                //todo: do this stuff in a IValueConverter instead?
                 TeslaEventMapLayer = new ObservableCollection<MapLayer>();
                 var layer = new MapElementsLayer();
                 foreach (var teslaEvent in events)

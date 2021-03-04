@@ -5,8 +5,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
+using TeslaCamMap.UwpClient.Model;
 using Windows.Storage;
 using Windows.Storage.Search;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.Services
 {
@@ -17,9 +21,9 @@ namespace TeslaCamMap.UwpClient.Services
         private readonly string _eventFileName = "event.json";
         private readonly string _thumbnailFileName = "thumb.png";
 
-        public async Task<List<TeslaEvent>> ParseFiles(IReadOnlyList<StorageFolder> folders)
+        public async Task<List<UwpTeslaEvent>> ParseFiles(IReadOnlyList<StorageFolder> folders)
         {
-            var result = new List<TeslaEvent>();
+            var result = new List<UwpTeslaEvent>();
 
             foreach (var folder in folders)
             {
@@ -36,7 +40,7 @@ namespace TeslaCamMap.UwpClient.Services
                     var eventMetadataFile = await eventFolder.GetFileAsync(_eventFileName);
                     if (eventMetadataFile != null)
                     {
-                        TeslaEvent teslaEvent = await ParseTeslaEvent(storeLocation, eventFolder, eventMetadataFile);
+                        UwpTeslaEvent teslaEvent = await ParseTeslaEvent(storeLocation, eventFolder, eventMetadataFile);
                         result.Add(teslaEvent);
                     }
                 }
@@ -45,15 +49,30 @@ namespace TeslaCamMap.UwpClient.Services
             return result;
         }
 
-        private async Task<TeslaEvent> ParseTeslaEvent(EventStoreLocation storeLocation, StorageFolder eventFolder, StorageFile eventMetadataFile)
+        public async Task<BitmapImage> LoadImageFromStorageFile(IStorageFile imageFile)
+        {
+            BitmapImage bitmapImage = null;
+
+            using (IRandomAccessStream fileStream =
+                await imageFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            {
+                bitmapImage = new BitmapImage();
+                bitmapImage.SetSource(fileStream);
+            }
+
+            return bitmapImage;
+        }
+
+        private async Task<UwpTeslaEvent> ParseTeslaEvent(EventStoreLocation storeLocation, StorageFolder eventFolder, StorageFile eventMetadataFile)
         {
             var eventText = await FileIO.ReadTextAsync(eventMetadataFile);
             var metadata = System.Text.Json.JsonSerializer.Deserialize<TeslaEventJson>(eventText);
-            var teslaEvent = new TeslaEvent(metadata);
+            var teslaEvent = new UwpTeslaEvent(metadata);
             teslaEvent.StoreLocation = storeLocation;
             teslaEvent.FolderPath = eventFolder.Path;
 
             var thumbnailFile = await eventFolder.GetFileAsync(_thumbnailFileName);
+            teslaEvent.ThumbnailFile = thumbnailFile;
             if (thumbnailFile != null)
                 teslaEvent.ThumbnailPath = thumbnailFile.Path;
 
@@ -66,22 +85,25 @@ namespace TeslaCamMap.UwpClient.Services
             return teslaEvent;
         }
 
-        private static Clip ParseClipFile(StorageFile eventFolderFile)
+        private static UwpClip ParseClipFile(StorageFile clipFile
+            )
         {
-            var clip = new Clip();
-            if (eventFolderFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))
+            var clip = new UwpClip();
+            if (clipFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))
                 clip.Camera = Camera.LeftRepeater;
-            else if (eventFolderFile.Name.Contains("front", StringComparison.InvariantCultureIgnoreCase))
+            else if (clipFile.Name.Contains("front", StringComparison.InvariantCultureIgnoreCase))
                 clip.Camera = Camera.Front;
-            else if (eventFolderFile.Name.Contains("right", StringComparison.InvariantCultureIgnoreCase))
+            else if (clipFile.Name.Contains("right", StringComparison.InvariantCultureIgnoreCase))
                 clip.Camera = Camera.RightRepeater;
-            else if (eventFolderFile.Name.Contains("back", StringComparison.InvariantCultureIgnoreCase))
+            else if (clipFile.Name.Contains("back", StringComparison.InvariantCultureIgnoreCase))
                 clip.Camera = Camera.Back;
             else
                 clip.Camera = Camera.Unknown;
 
-            clip.FilePath = eventFolderFile.Path;
-            clip.FileName = eventFolderFile.Name;
+            clip.FilePath = clipFile.Path;
+            clip.FileName = clipFile.Name;
+
+            clip.ClipFile = clipFile;
             return clip;
         }
     }

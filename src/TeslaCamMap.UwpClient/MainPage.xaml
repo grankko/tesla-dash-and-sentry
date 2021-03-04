@@ -9,9 +9,13 @@
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:vm="using:TeslaCamMap.UwpClient.ViewModels"
     xmlns:converters="using:TeslaCamMap.UwpClient.Converters"
+    NavigationCacheMode="Required"
+    Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <converters:BusyLabelConverter x:Key="BusyLabelConverter" />
+        <converters:EventReasonLabelConverter x:Key="ReasonLabelConverter" />
+        <converters:NullVisibilityConverter x:Key="VisibilityConverter" />
     </Page.Resources>
     <Page.DataContext>
         <vm:MainViewModel />
@@ -21,35 +25,76 @@
             <RowDefinition />
             <RowDefinition Height="150" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
         
         <maps:MapControl Grid.Row="0"
                          MapServiceToken="blZUM4oxWRB63DRW5wVT~QuicHoTczOcLusxVvXtoUA~AmHXiEOyNXCbK5rM1dQbXsYq4tu1rn3lBsnvhB7eyBRTTZiz9O3OsgjcU8ZOE_0I"
                          Layers="{Binding TeslaEventMapLayer}"
                          MapElementClick="MapControl_MapElementClick"/>
+
+        <Grid Grid.Row="0" Grid.Column="1"  Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Row="0" Text="Events" FontWeight="Bold" />
+            <ListView  Grid.Row="1" ItemsSource="{Binding Path=TeslaEvents}" SelectedItem="{Binding Path=SelectedTeslaEvent, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=TimeStamp}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
         
-        <Grid Grid.Row="1" Margin="10">
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"  MinWidth="300" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <Button VerticalAlignment="Center" Command="{Binding PickFolderCommand}">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED25;"/>
-                </Button>
-                <TextBlock Margin="5" VerticalAlignment="Center">
-                    <TextBlock.Text>
-                        <Binding Path="IsBusy" Converter="{StaticResource BusyLabelConverter}">
-                            <Binding.ConverterParameter>
-                                <x:String>Loading ...|Pick a folder</x:String>
-                            </Binding.ConverterParameter>
-                        </Binding>
-                    </TextBlock.Text>
-                </TextBlock>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Vertical">
-                <TextBlock Text="{Binding Path=SelectedTeslaEvent.City}" />
-                <TextBlock Text="{Binding Path=SelectedTeslaEvent.TimeStamp}" />
-            </StackPanel>
+            <Grid Grid.Row="0" Grid.Column="0" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button VerticalAlignment="Center" Command="{Binding PickFolderCommand}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xED25;"/>
+                    </Button>
+                    <TextBlock Margin="5" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <Binding Path="IsBusy" Converter="{StaticResource BusyLabelConverter}">
+                                <Binding.ConverterParameter>
+                                    <x:String>Loading ...|Pick a folder</x:String>
+                                </Binding.ConverterParameter>
+                            </Binding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button VerticalAlignment="Center" Command="{Binding Path=ViewVideoCommand}" CommandParameter="{Binding Path=SelectedTeslaEvent}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE714;"/>
+                    </Button>
+                    <TextBlock  Margin="5" VerticalAlignment="Center" Text="View video" />
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Column="1" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{Binding Path=SelectedTeslaEventThumb}" />                
+                <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical" Visibility="{Binding Path=SelectedTeslaEvent, Converter={StaticResource VisibilityConverter}}">
+                    <TextBlock Text="Recorded event" FontWeight="Bold" />
+                    <TextBlock Text="{Binding Path=SelectedTeslaEvent.TimeStamp}" />
+                    <TextBlock Text="{Binding Path=SelectedTeslaEvent.City}" />
+                    <TextBlock Text="{Binding Path=SelectedTeslaEvent.Reason, Converter={StaticResource ReasonLabelConverter}}" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

@@ -42,5 +42,10 @@ namespace TeslaCamMap.UwpClient
             MapElement clickedItem = args.MapElements.First();
             ((MainViewModel)DataContext).OnMapElementClicked(clickedItem);
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((MainViewModel)DataContext).ViewFrame = this.Frame;
+        }
     }
 }
