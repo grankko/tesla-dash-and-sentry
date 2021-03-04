@@ -27,7 +27,6 @@ namespace TeslaCamMap.UwpClient
         public MainPage()
         {
             this.InitializeComponent();
-            //TeslaEventMap.MapServiceToken = "blZUM4oxWRB63DRW5wVT~QuicHoTczOcLusxVvXtoUA~AmHXiEOyNXCbK5rM1dQbXsYq4tu1rn3lBsnvhB7eyBRTTZiz9O3OsgjcU8ZOE_0I";
         }
 
         //todo: Center map zoom around 
