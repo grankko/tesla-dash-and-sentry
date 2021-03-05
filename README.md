@@ -12,7 +12,7 @@ Uses [FFMpegInteropX](https://github.com/ffmpeginteropx/FFmpegInteropX) for bett
 
 ## Known issues
 * To change position in a video you need to drag the thumb of the slider, "just" clicking a position in the slider does not work.
-* Not dynamic at all. If Tesla changes anything in how these files are produced it will break. Only tested on a 2020 Model 3 SR+.
+* If Tesla changes anything in how these files are produced it will break. Only tested on a 2020 Model 3 SR+.
 
 ## Screenshots
 ![how to start game](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_map.png)
