@@ -9,3 +9,7 @@ Requires a Bing Map API key. The solution expects the key in a file named `bing_
 
 ## External packages
 Uses [FFMpegInteropX](https://github.com/ffmpeginteropx/FFmpegInteropX) for better video playback.
+
+## Screenshots
+![how to start game](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_map.png)
+![how to start game](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_video.png)
