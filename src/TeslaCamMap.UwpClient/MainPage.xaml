@@ -44,7 +44,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             
-            <TextBlock Grid.Row="0" Text="Events" FontWeight="Bold" />
+            <TextBlock Grid.Row="0" Text="Recorded events" FontWeight="Bold" />
             <ListView  Grid.Row="1" ItemsSource="{Binding Path=TeslaEvents}" SelectedItem="{Binding Path=SelectedTeslaEvent, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>

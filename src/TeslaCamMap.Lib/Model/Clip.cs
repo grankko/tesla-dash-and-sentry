@@ -2,6 +2,9 @@
 
 namespace TeslaCamMap.Lib.Model
 {
+    /// <summary>
+    /// Represents one video clip of a segment of the event.
+    /// </summary>
     public class Clip
     {
         private string _fileName;
@@ -19,8 +22,12 @@ namespace TeslaCamMap.Lib.Model
         }
 
         public DateTime TimeStampFromFileName { get; set; }
+
         private void ParseTimeStamp(string fileName)
         {
+            // todo: regex instead
+            // todo2: not even used right now
+
             //filname format: 2020-07-02_12-10-39-back.mp4
 
             int year = int.Parse(fileName.Substring(0, 4));

@@ -22,7 +22,6 @@ namespace TeslaCamMap.UwpClient.ViewModels
     {
         private const int DefaultZoomLevel = 15;
 
-
         private FileSystemService _fileSystemService;
 
         private int _mapZoom;
@@ -156,25 +155,28 @@ namespace TeslaCamMap.UwpClient.ViewModels
             return !IsBusy;
         }
 
-        // todo: this is a hack
         private async void MainViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // Load thumbnail image for the selected event.
+            // todo: bind directly to the image source?
             if (e.PropertyName == nameof(SelectedTeslaEvent))
                 SelectedTeslaEventThumb = await _fileSystemService.LoadImageFromStorageFile(SelectedTeslaEvent.ThumbnailFile);
         }
 
-        //todo: hack
+        //todo: should bind to a command from each MapElement instead
         public void OnMapElementClicked(MapElement clickedItem)
         {
             var teslaEvent = (UwpTeslaEvent)clickedItem.Tag;
             SelectedTeslaEvent = teslaEvent;
         }
 
-        //todo: hack
         public async void OnLoaded()
         {
-            BingMapServiceToken = await _fileSystemService.GetStringFromApplicationFile("bing_key");
-            SelectedFolderLabelText = "No folder selected";
+            if (String.IsNullOrEmpty(BingMapServiceToken))
+            {
+                BingMapServiceToken = await _fileSystemService.GetStringFromApplicationFile("bing_key");
+                SelectedFolderLabelText = "No folder selected";
+            }
         }
 
         private async void PickFolderCommandExecute(object obj)

@@ -17,24 +17,22 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace TeslaCamMap.UwpClient
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class EventDetailsPage : Page
     {
         private const int BufferSizeInBytes = 1048576;
 
+        // One instance per video seems to work best.
+        // A reference to the FFMpegInteropMSS needs to be maintained for the players to be stable.
         private FFmpegInteropMSS _leftFfmpegInterop;
         private FFmpegInteropMSS _frontFfmpegInterop;
         private FFmpegInteropMSS _rightFfmpegInterop;
         private FFmpegInteropMSS _backFfmpegInterop;
 
-        private DispatcherTimer _timer;
         private List<MediaPlayerElement> _players = new List<MediaPlayerElement>();
+
+        private DispatcherTimer _timer; // Used to update the video slider when video is playing
 
         public EventDetailsPage()
         {
@@ -43,6 +41,7 @@ namespace TeslaCamMap.UwpClient
             _timer.Interval = TimeSpan.FromMilliseconds(500);
             _timer.Tick += _timer_Tick;
 
+            // Keep all players in a collection for easier manipulation
             _players.Add(LeftPlayer);
             _players.Add(FrontPlayer);
             _players.Add(RightPlayer);
@@ -51,6 +50,8 @@ namespace TeslaCamMap.UwpClient
 
         private void _timer_Tick(object sender, object e)
         {
+            // Update slider to represent the current position in the video
+            // todo: Bind from ViewModel instead?
             VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
@@ -74,6 +75,9 @@ namespace TeslaCamMap.UwpClient
                 LoadClip(clip);
         }
 
+        /// <summary>
+        /// Loads all four video files in one event video segment to the MediaPlayerElements
+        /// </summary>
         private async void LoadClip(UwpClip clip)
         {
             FFmpegInteropConfig conf = new FFmpegInteropConfig();
@@ -109,33 +113,35 @@ namespace TeslaCamMap.UwpClient
 
         private void Vm_PauseVideo(object sender, EventArgs e)
         {
+            // Pause video when event raised in ViewModel
             _players.ForEach(p => p.MediaPlayer.Pause());
-
             _timer.Stop();
         }
 
         private void Vm_PlayVideo(object sender, EventArgs e)
         {
+            // Play video when event raised in ViewModel
             _players.ForEach(p => p.MediaPlayer.Play());
-
             _timer.Start();
         }
 
         private void VideoSlider_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
+            // Pause video when user starts interacting with the slider thumb
             _players.ForEach(p => p.MediaPlayer.Pause());
-
             _timer.Stop();
         }
 
         private void VideoSlider_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
+            // Set playback position for each video when user have moved the slider thumb
             var newValue = VideoSlider.Value;
             _players.ForEach(p => p.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue));
 
             var vm = (EventDetailsViewModel)this.DataContext;
             if (vm.IsPlaying)
             {
+                // Resume playing if the videos was playing before interactions started
                 vm.PlayVideoCommand.Execute(null);
                 _timer.Start();
             }

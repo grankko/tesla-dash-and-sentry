@@ -13,13 +13,13 @@ namespace TeslaCamMap.UwpClient.ViewModels
     {
         public bool IsPlaying { get; set; }
 
+        // Events for stuff that needs to happen in the view (for now)
         public event EventHandler PlayVideo;
         public event EventHandler PauseVideo;
         public event EventHandler<LoadClipEventArgs> LoadClip;
 
         public RelayCommand PlayVideoCommand { get; set; }
         public RelayCommand PauseVideoCommand { get; set; }
-
         public RelayCommand NextClipCommand { get; set; }
         public RelayCommand PreviousClipCommand { get; set; }
         public RelayCommand NavigateToMapCommand { get; set; }
@@ -32,14 +32,17 @@ namespace TeslaCamMap.UwpClient.ViewModels
             get { return _currentClip; }
             set
             {
+                // Pause video if a new clip is loaded
                 if (_currentClip != null)
                     PauseVideoCommand.Execute(null);
 
                 _currentClip = value;
                 OnPropertyChanged();
+
                 NextClipCommand.RaiseCanExecuteChanged();
                 PreviousClipCommand.RaiseCanExecuteChanged();
 
+                // Signals view to load videos into players
                 if (LoadClip != null)
                     LoadClip.Invoke(this, new LoadClipEventArgs(_currentClip));
             }
@@ -56,15 +59,18 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
             Clips = new ObservableCollection<ClipViewModel>();
 
+            // Find all unique video segments and populate ClipViewModels.
+            // todo: this should have been modeled better
             var leftRepeaterClips = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Camera.LeftRepeater).OrderBy(c => c.FileName).ToList();
             int index = 0;
             foreach (var clip in leftRepeaterClips)
             {
                 var clipViewModel = new ClipViewModel();
-                clipViewModel.FileName = clip.FileName.Substring(0, 19);
+                clipViewModel.CommonFileNameSegment = clip.FileName.Substring(0, 19);
                 clipViewModel.ClipIndex = index;
+                clipViewModel.TimeStamp = clip.TimeStampFromFileName;
 
-                var allAngleClips = model.Clips.Cast<UwpClip>().Where(c => c.FileName.Contains(clipViewModel.FileName));
+                var allAngleClips = model.Clips.Cast<UwpClip>().Where(c => c.FileName.Contains(clipViewModel.CommonFileNameSegment));
                 clipViewModel.Clips = allAngleClips.ToList();
 
                 Clips.Add(clipViewModel);

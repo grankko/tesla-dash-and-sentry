@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TeslaCamMap.Lib.Model
 {
+    /// <summary>
+    /// Represents one unique event, with metadata and references to all video clips (segments).
+    /// </summary>
     public class TeslaEvent
     {
         public DateTime TimeStamp { get; set; }

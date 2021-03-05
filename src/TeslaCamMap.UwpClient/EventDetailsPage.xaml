@@ -65,11 +65,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock FontWeight="Bold" Text="Video files" Margin="5" />
+                <TextBlock FontWeight="Bold" Text="Event video segments" Margin="5" />
                 <ListView x:Name="ClipsListView" Grid.Row="1" ItemsSource="{Binding Path=Clips}" SelectedItem="{Binding Path=CurrentClip, Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ClipsListView_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=FileName}" />
+                            <TextBlock Text="{Binding Path=TimeStamp}" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

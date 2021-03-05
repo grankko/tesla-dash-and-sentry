@@ -21,11 +21,16 @@ namespace TeslaCamMap.UwpClient.Services
         private readonly string _eventFileName = "event.json";
         private readonly string _thumbnailFileName = "thumb.png";
 
+        /// <summary>
+        /// Parse file metadata in Tesla Cam folders.
+        /// </summary>
+        /// <param name="folders">Tesla Cam folders</param>
+        /// <returns>Model representing a list of TeslaEvents found in the selected folders.</returns>
         public async Task<List<UwpTeslaEvent>> ParseFiles(IReadOnlyList<StorageFolder> folders)
         {
             var result = new List<UwpTeslaEvent>();
 
-            foreach (var folder in folders)
+            foreach (var folder in folders)   // "SavedClips", "SentryClips"
             {
                 EventStoreLocation storeLocation = EventStoreLocation.Unkown;
                 if (folder.Name.Equals(_savedClipsFolderName, StringComparison.InvariantCultureIgnoreCase))
@@ -35,7 +40,7 @@ namespace TeslaCamMap.UwpClient.Services
 
                 var eventFolders = await folder.GetFoldersAsync();
 
-                foreach (var eventFolder in eventFolders)
+                foreach (var eventFolder in eventFolders) // "2020-07-02_12-13-41" etc ..
                 {
                     var eventMetadataFile = await eventFolder.GetFileAsync(_eventFileName);
                     if (eventMetadataFile != null)
@@ -63,6 +68,13 @@ namespace TeslaCamMap.UwpClient.Services
             return bitmapImage;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="storeLocation">The Tesla Cam folder the event was located in.</param>
+        /// <param name="eventFolder">Path the the event folder.</param>
+        /// <param name="eventMetadataFile">Metadata file associated with the event</param>
+        /// <returns></returns>
         private async Task<UwpTeslaEvent> ParseTeslaEvent(EventStoreLocation storeLocation, StorageFolder eventFolder, StorageFile eventMetadataFile)
         {
             var eventText = await FileIO.ReadTextAsync(eventMetadataFile);
@@ -93,6 +105,12 @@ namespace TeslaCamMap.UwpClient.Services
             return result;
         }
 
+        /// <summary>
+        /// Gets a model of each clip (camera angle) for a segment of the event.
+        /// </summary>
+        /// <param name="clipFile"></param>
+        /// <param name="teslaEvent"></param>
+        /// <returns></returns>
         private static UwpClip ParseClipFile(StorageFile clipFile, UwpTeslaEvent teslaEvent)
         {
             var clip = new UwpClip();
