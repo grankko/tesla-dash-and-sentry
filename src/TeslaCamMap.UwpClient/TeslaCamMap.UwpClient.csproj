@@ -121,7 +121,9 @@
     </Compile>
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Converters\BusyLabelConverter.cs" />
+    <Compile Include="Converters\BusyOpacityConverter.cs" />
     <Compile Include="Converters\EventReasonLabelConverter.cs" />
+    <Compile Include="Converters\EventReasonToGlyphConverter.cs" />
     <Compile Include="Converters\NullVisibilityConverter.cs" />
     <Compile Include="EventDetailsPage.xaml.cs">
       <DependentUpon>EventDetailsPage.xaml</DependentUpon>

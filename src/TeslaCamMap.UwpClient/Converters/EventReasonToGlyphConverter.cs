@@ -8,20 +8,24 @@ using Windows.UI.Xaml.Data;
 
 namespace TeslaCamMap.UwpClient.Converters
 {
-    public class EventReasonLabelConverter : IValueConverter
+    public class EventReasonToGlyphConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is EventReason)
             {
-                switch (value)
+                var reason = (EventReason)value;
+                switch (reason)
                 {
                     case EventReason.SentryAwareObjectDetection:
-                        return "Sentry aware object detection";
+                        return "\xE8B8";
                     case EventReason.UserInteractionDashCamTapped:
-                        return "Saved by user";
+                        return "\xE78C";
                     case EventReason.UserInteractionHonk:
-                        return "User honked";
+                        return "\xF0EE";
+                    default:
+                        return "\xF142";
+
                 }
             }
 

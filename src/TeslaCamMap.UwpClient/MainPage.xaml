@@ -16,6 +16,8 @@
         <converters:BusyLabelConverter x:Key="BusyLabelConverter" />
         <converters:EventReasonLabelConverter x:Key="ReasonLabelConverter" />
         <converters:NullVisibilityConverter x:Key="VisibilityConverter" />
+        <converters:EventReasonToGlyphConverter x:Key="EventReasonConverter" />
+        <converters:BusyOpacityConverter x:Key="BusyOpacityConverter" />
     </Page.Resources>
     <Page.DataContext>
         <vm:MainViewModel />
@@ -27,17 +29,18 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="220" />
         </Grid.ColumnDefinitions>
         
         <maps:MapControl Grid.Row="0"
+                         Opacity="{Binding Path=IsBusy, Converter={StaticResource BusyOpacityConverter}}"
                          x:Name="TeslaEventMap"
                          MapServiceToken="{Binding Path=BingMapServiceToken}"
                          Layers="{Binding TeslaEventMapLayer}"
                          Center="{Binding Path=MapCenter, Mode=TwoWay}"
                          ZoomLevel="{Binding Path=MapZoom, Mode=TwoWay}"
                          MapElementClick="MapControl_MapElementClick"/>
-
+        <ProgressRing Grid.Row="0" Width="75" Height="75" IsActive="{Binding Path=IsBusy}" Visibility="Visible" />
         <Grid Grid.Row="0" Grid.Column="1"  Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -48,7 +51,10 @@
             <ListView  Grid.Row="1" ItemsSource="{Binding Path=TeslaEvents}" SelectedItem="{Binding Path=SelectedTeslaEvent, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Path=TimeStamp}" />
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Glyph="{Binding Path=Reason, Converter={StaticResource EventReasonConverter}}" Margin="2"/>
+                            <TextBlock Text="{Binding Path=TimeStamp}" VerticalAlignment="Center" Margin="2" />
+                        </StackPanel>                        
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -79,7 +85,6 @@
                             </Binding>
                         </TextBlock.Text>
                     </TextBlock>
-                    <ProgressRing IsActive="{Binding Path=IsBusy}" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
                     <Button VerticalAlignment="Center" Command="{Binding Path=ViewVideoCommand}" CommandParameter="{Binding Path=SelectedTeslaEvent}" Visibility="{Binding Path=SelectedTeslaEvent, Converter={StaticResource VisibilityConverter}}">
@@ -95,12 +100,18 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0" Source="{Binding Path=SelectedTeslaEventThumb}" />                
                 <StackPanel Grid.Column="1" Margin="5" Orientation="Vertical" Visibility="{Binding Path=SelectedTeslaEvent, Converter={StaticResource VisibilityConverter}}">
-                    <TextBlock Text="Recorded event" FontWeight="Bold" />
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Glyph="{Binding Path=SelectedTeslaEvent.Reason, Converter={StaticResource EventReasonConverter}}" Margin="2"/>
+                        <TextBlock Text="{Binding Path=SelectedTeslaEvent.Reason, Converter={StaticResource ReasonLabelConverter}}" VerticalAlignment="Center" Margin="2" FontWeight="Bold" />
+                    </StackPanel>
                     <TextBlock Text="{Binding Path=SelectedTeslaEvent.TimeStamp}" />
                     <TextBlock Text="{Binding Path=SelectedTeslaEvent.City}" />
-                    <TextBlock Text="{Binding Path=SelectedTeslaEvent.Reason, Converter={StaticResource ReasonLabelConverter}}" />
                 </StackPanel>
             </Grid>
         </Grid>
     </Grid>
 </Page>
+
+
+
+    

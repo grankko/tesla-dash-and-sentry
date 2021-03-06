@@ -47,7 +47,7 @@
                 <Slider x:Name="VideoSlider" Margin="15" ManipulationMode="All" ManipulationStarted="VideoSlider_ManipulationStarted" ManipulationCompleted="VideoSlider_ManipulationCompleted" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
                     <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousClipCommand}" Margin="2">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;"/>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=PlayVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
@@ -56,7 +56,7 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE769;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=NextClipCommand}" Margin="2">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;"/>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;"/>
                     </Button>
                 </StackPanel>
             </StackPanel>
