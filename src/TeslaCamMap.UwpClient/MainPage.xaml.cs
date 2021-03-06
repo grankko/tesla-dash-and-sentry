@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using TeslaCamMap.UwpClient.ViewModels;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using TeslaCamMap.UwpClient.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace TeslaCamMap.UwpClient
 {
@@ -24,16 +11,15 @@ namespace TeslaCamMap.UwpClient
             this.InitializeComponent();
         }
 
-        private void MapControl_MapElementClick(MapControl sender, MapElementClickEventArgs args)
-        {
-            MapIcon clickedItem = (MapIcon)args.MapElements.First();
-            ((MainViewModel)DataContext).OnMapElementClicked(clickedItem);
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ((MainViewModel)DataContext).ViewFrame = this.Frame;
             ((MainViewModel)DataContext).OnLoaded();
+        }
+
+        private void EventsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            EventsListView.ScrollIntoView(EventsListView.SelectedItem);
         }
     }
 }

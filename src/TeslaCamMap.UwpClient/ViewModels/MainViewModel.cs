@@ -1,20 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Commands;
-using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
 using Windows.Storage.Pickers;
-using Windows.Storage.Search;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Maps;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.ViewModels
 {
@@ -79,46 +68,31 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
-        private UwpTeslaEvent _selectedTeslaEvent;
-        public UwpTeslaEvent SelectedTeslaEvent
+        private TeslaEventMapElementViewModel _selectedTeslaEvent;
+        public TeslaEventMapElementViewModel SelectedTeslaEvent
         {
             get { return _selectedTeslaEvent; }
             set
             {
-                _selectedTeslaEvent = value;
+                if (_selectedTeslaEvent != null)
+                    _selectedTeslaEvent.IsSelected = false;
+
+                if (value != null)
+                {
+                    _selectedTeslaEvent = value;
+                    _selectedTeslaEvent.IsSelected = true;
+                    MapCenter = _selectedTeslaEvent.Location;
+                }
+
                 OnPropertyChanged();
 
                 if (MapZoom < DefaultZoomLevel)
                     MapZoom = DefaultZoomLevel;
-
-                MapCenter = _selectedTeslaEvent.EventMapIcon.Location;
             }
         }
 
-        private BitmapImage _selectedTeslaEventThumb;
-        public BitmapImage SelectedTeslaEventThumb
-        {
-            get { return _selectedTeslaEventThumb; }
-            set
-            {
-                _selectedTeslaEventThumb = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<MapLayer> _teslaEventMapLayer;
-        public ObservableCollection<MapLayer> TeslaEventMapLayer
-        {
-            get { return _teslaEventMapLayer; }
-            set
-            {
-                _teslaEventMapLayer = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<UwpTeslaEvent> _teslaEvents;
-        public ObservableCollection<UwpTeslaEvent> TeslaEvents
+        private ObservableCollection<TeslaEventMapElementViewModel> _teslaEvents;
+        public ObservableCollection<TeslaEventMapElementViewModel> TeslaEvents
         {
             get { return _teslaEvents; }
             set
@@ -130,14 +104,25 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public RelayCommand PickFolderCommand { get; set; }
         public RelayCommand ViewVideoCommand { get; set; }
+        public RelayCommand SelectEventCommand { get; set; }
 
         public MainViewModel()
         {
             _fileSystemService = new FileSystemService();
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
+            SelectEventCommand = new RelayCommand(SelectEventCommandExecute, CanSelectEventCommandExecute);
 
-            this.PropertyChanged += MainViewModel_PropertyChanged;
+        }
+
+        private bool CanSelectEventCommandExecute(object arg)
+        {
+            return true;
+        }
+
+        private void SelectEventCommandExecute(object obj)
+        {
+            SelectedTeslaEvent = (TeslaEventMapElementViewModel)obj;
         }
 
         private bool CanViewVideoCommandExecute(object arg)
@@ -147,27 +132,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private void ViewVideoCommandExecute(object obj)
         {
-            ViewFrame.Navigate(typeof(EventDetailsPage), obj);
+            ViewFrame.Navigate(typeof(EventDetailsPage), ((TeslaEventMapElementViewModel)obj).Model);
         }
 
         private bool CanPickFolderCommandExecute(object arg)
         {
             return !IsBusy;
-        }
-
-        private async void MainViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            // Load thumbnail image for the selected event.
-            // todo: bind directly to the image source?
-            if (e.PropertyName == nameof(SelectedTeslaEvent))
-                SelectedTeslaEventThumb = await _fileSystemService.LoadImageFromStorageFile(SelectedTeslaEvent.ThumbnailFile);
-        }
-
-        //todo: should bind to a command from each MapElement instead
-        public void OnMapElementClicked(MapElement clickedItem)
-        {
-            var teslaEvent = (UwpTeslaEvent)clickedItem.Tag;
-            SelectedTeslaEvent = teslaEvent;
         }
 
         public async void OnLoaded()
@@ -194,23 +164,10 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 var folders = await result.GetFoldersAsync();
 
                 var events = await _fileSystemService.ParseFiles(folders);
-                TeslaEvents = new ObservableCollection<UwpTeslaEvent>(events);
+                TeslaEvents = new ObservableCollection<TeslaEventMapElementViewModel>();
+                events.ForEach(e => TeslaEvents.Add(new TeslaEventMapElementViewModel(e)));
 
                 SelectedFolderLabelText = $"{result.Path} - {TeslaEvents.Count} events found.";
-
-                //todo: databind and do this stuff in a IValueConverter instead?
-                TeslaEventMapLayer = new ObservableCollection<MapLayer>();
-                var layer = new MapElementsLayer();
-                foreach (var teslaEvent in events)
-                {
-                    MapIcon eventMapIcon = new MapIcon();
-                    eventMapIcon.Location = new Geopoint(new BasicGeoposition() { Latitude = teslaEvent.EstimatedLatitude, Longitude = teslaEvent.EstimatedLongitude });
-                    eventMapIcon.Tag = teslaEvent;
-                    layer.MapElements.Add(eventMapIcon);
-
-                    teslaEvent.EventMapIcon = eventMapIcon;
-                }
-                TeslaEventMapLayer.Add(layer);
             }
 
             IsBusy = false;
