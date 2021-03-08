@@ -17,7 +17,7 @@ namespace TeslaCamMap.Lib.Model
         public EventReason Reason { get; set; }
         public EventStoreLocation StoreLocation { get; set; }
         public string FolderPath { get; set; }
-        public List<Clip> Clips { get; set; }
+        public List<Clip> Clips { get; set; }  // todo: The model is wrong, should introduce an entity between Clip and Event, representing a Segment with four Clips. Duck taped right now in the ViewModel.
         public string ThumbnailPath { get; set; }
 
         public TeslaEvent(TeslaEventJson metadata)
