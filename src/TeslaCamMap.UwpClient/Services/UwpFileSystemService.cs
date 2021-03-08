@@ -14,8 +14,9 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.Services
 {
-    public class FileSystemService
+    public class UwpFileSystemService
     {
+        private readonly string _videoFrameRatePropertyName = "System.Video.FrameRate";
         private readonly string _savedClipsFolderName = "SavedClips";
         private readonly string _sentryClipsFolderName = "SentryClips";
         private readonly string _eventFileName = "event.json";
@@ -69,7 +70,7 @@ namespace TeslaCamMap.UwpClient.Services
         }
 
         /// <summary>
-        /// 
+        /// Parse all information needed for a single event.
         /// </summary>
         /// <param name="storeLocation">The Tesla Cam folder the event was located in.</param>
         /// <param name="eventFolder">Path the the event folder.</param>
@@ -92,7 +93,7 @@ namespace TeslaCamMap.UwpClient.Services
 
             foreach (var eventFolderFile in eventFolderFiles)
                 if (eventFolderFile.FileType.Equals(".mp4", StringComparison.InvariantCultureIgnoreCase))
-                    teslaEvent.Clips.Add(ParseClipFile(eventFolderFile, teslaEvent));
+                    teslaEvent.Clips.Add(await ParseClipFile(eventFolderFile, teslaEvent));
 
             return teslaEvent;
         }
@@ -111,7 +112,7 @@ namespace TeslaCamMap.UwpClient.Services
         /// <param name="clipFile"></param>
         /// <param name="teslaEvent"></param>
         /// <returns></returns>
-        private static UwpClip ParseClipFile(StorageFile clipFile, UwpTeslaEvent teslaEvent)
+        private async Task<UwpClip> ParseClipFile(StorageFile clipFile, UwpTeslaEvent teslaEvent)
         {
             var clip = new UwpClip();
             if (clipFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))
@@ -125,6 +126,8 @@ namespace TeslaCamMap.UwpClient.Services
             else
                 clip.Camera = Camera.Unknown;
 
+            IDictionary<string, object> retrieveProperties = await clipFile.Properties.RetrievePropertiesAsync(new string[] { _videoFrameRatePropertyName });
+            clip.FrameRate = ((uint)retrieveProperties[_videoFrameRatePropertyName]);
             clip.FilePath = clipFile.Path;
             clip.FileName = clipFile.Name;
 

@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using TeslaCamMap.Lib.Model;
+using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.ViewModels;
+using Windows.Media;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -21,6 +24,9 @@ namespace TeslaCamMap.UwpClient
         private FFmpegInteropMSS _frontFfmpegInterop;
         private FFmpegInteropMSS _rightFfmpegInterop;
         private FFmpegInteropMSS _backFfmpegInterop;
+
+        private MediaTimelineController _mediaTimelineController = new MediaTimelineController();
+        private int _currentEstimatedFrameDuration;
 
         private List<MediaPlayerElement> _players = new List<MediaPlayerElement>();
 
@@ -61,19 +67,19 @@ namespace TeslaCamMap.UwpClient
             vm.OnNavigated();
         }
 
-        // todo: inconsistent behavior. Root cause is probably that there is no real synchronization between MediaElements.
         private void Vm_StepFrame(object sender, StepFrameEventArgs e)
         {
             if (e.StepForward)
-                _players.ForEach(p => p.MediaPlayer.StepBackwardOneFrame());
+                _mediaTimelineController.Position += TimeSpan.FromMilliseconds(_currentEstimatedFrameDuration);
             else
-                _players.ForEach(p => p.MediaPlayer.StepBackwardOneFrame());
+                _mediaTimelineController.Position -= TimeSpan.FromMilliseconds(_currentEstimatedFrameDuration);
 
             VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
         private void Vm_LoadClip(object sender, LoadClipEventArgs e)
         {
+            _currentEstimatedFrameDuration = (int)e.Clip.EstimatedFrameDuration;
             VideoSlider.Value = 0;
             foreach (var clip in e.Clip.Clips)
                 LoadClip(clip);
@@ -87,60 +93,70 @@ namespace TeslaCamMap.UwpClient
             FFmpegInteropConfig conf = new FFmpegInteropConfig();
             conf.StreamBufferSize = BufferSizeInBytes;
 
+            var player = new MediaPlayer();
+            player.CommandManager.IsEnabled = false;
+            player.TimelineController = _mediaTimelineController;
+
             using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
                 switch (clip.Camera)
                 {
                     case Camera.LeftRepeater:
                         _leftFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        LeftPlayer.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
+                        player.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
+                        LeftPlayer.SetMediaPlayer(player);
                         VideoSlider.Minimum = 0;
                         VideoSlider.Maximum = _leftFfmpegInterop.Duration.TotalSeconds;
                         break;
                     case Camera.Front:
                         _frontFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        FrontPlayer.Source = _frontFfmpegInterop.CreateMediaPlaybackItem();
+                        player.Source = _frontFfmpegInterop.CreateMediaPlaybackItem();
+                        FrontPlayer.SetMediaPlayer(player);
                         break;
                     case Camera.RightRepeater:
                         _rightFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        RightPlayer.Source = _rightFfmpegInterop.CreateMediaPlaybackItem();
+                        player.Source = _rightFfmpegInterop.CreateMediaPlaybackItem();
+                        RightPlayer.SetMediaPlayer(player);
                         break;
                     case Camera.Back:
                         _backFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        BackPlayer.Source = _backFfmpegInterop.CreateMediaPlaybackItem();
+                        player.Source = _backFfmpegInterop.CreateMediaPlaybackItem();
+                        BackPlayer.SetMediaPlayer(player);
                         break;
                     default:
                         throw new InvalidOperationException();
                 }
             }
+
+            _mediaTimelineController.Position = TimeSpan.Zero;
         }
 
         private void Vm_PauseVideo(object sender, EventArgs e)
         {
             // Pause video when event raised in ViewModel
-            _players.ForEach(p => p.MediaPlayer.Pause());
             _timer.Stop();
+            _mediaTimelineController.Pause();
         }
 
         private void Vm_PlayVideo(object sender, EventArgs e)
         {
             // Play video when event raised in ViewModel
-            _players.ForEach(p => p.MediaPlayer.Play());
+            _mediaTimelineController.Resume();
             _timer.Start();
         }
 
         private void VideoSlider_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
             // Pause video when user starts interacting with the slider thumb
-            _players.ForEach(p => p.MediaPlayer.Pause());
             _timer.Stop();
+            _mediaTimelineController.Pause();
         }
 
         private void VideoSlider_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             // Set playback position for each video when user have moved the slider thumb
             var newValue = VideoSlider.Value;
-            _players.ForEach(p => p.MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(newValue));
+            _mediaTimelineController.Position = TimeSpan.FromSeconds(newValue);
 
             var vm = (EventDetailsViewModel)this.DataContext;
             if (vm.IsPlaying)

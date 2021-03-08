@@ -11,6 +11,8 @@ namespace TeslaCamMap.Lib.Model
 
         public Camera Camera { get; set; }
         public string FilePath { get; set; }
+        public uint FrameRate { get; set; }
+        public uint FrameDuration { get => FrameRate / 1000; }
         public string FileName
         {
             get => _fileName;
@@ -26,8 +28,6 @@ namespace TeslaCamMap.Lib.Model
         private void ParseTimeStamp(string fileName)
         {
             // todo: regex instead
-            // todo2: not even used right now
-
             //filname format: 2020-07-02_12-10-39-back.mp4
 
             int year = int.Parse(fileName.Substring(0, 4));

@@ -1,6 +1,7 @@
 ﻿using System;
+using TeslaCamMap.UwpClient.ViewModels;
 
-namespace TeslaCamMap.UwpClient.ViewModels
+namespace TeslaCamMap.UwpClient.ClientEventArgs
 {
     public class LoadClipEventArgs : EventArgs
     {

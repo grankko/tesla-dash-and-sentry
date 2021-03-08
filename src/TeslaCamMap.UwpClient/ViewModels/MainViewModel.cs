@@ -11,7 +11,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
     {
         private const int DefaultZoomLevel = 15;
 
-        private FileSystemService _fileSystemService;
+        private UwpFileSystemService _fileSystemService;
 
         private int _mapZoom;
         public int MapZoom
@@ -108,7 +108,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public MainViewModel()
         {
-            _fileSystemService = new FileSystemService();
+            _fileSystemService = new UwpFileSystemService();
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
             SelectEventCommand = new RelayCommand(SelectEventCommandExecute, CanSelectEventCommandExecute);

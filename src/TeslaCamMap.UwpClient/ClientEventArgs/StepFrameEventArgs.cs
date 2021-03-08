@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TeslaCamMap.UwpClient.ViewModels
+namespace TeslaCamMap.UwpClient.ClientEventArgs
 {
     public class StepFrameEventArgs : EventArgs
     {

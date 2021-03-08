@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using TeslaCamMap.Lib.Model;
+using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Model;
 
@@ -73,7 +74,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
             Clips = new ObservableCollection<ClipViewModel>();
 
             // Find all unique video segments and populate ClipViewModels.
-            // todo: this should have been modeled better
+            // todo: this should really not be done in the ViewModel. Fix the model, map when reading from filesystem
             var leftRepeaterClips = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Camera.LeftRepeater).OrderBy(c => c.FileName).ToList();
             int index = 0;
             foreach (var clip in leftRepeaterClips)
@@ -85,6 +86,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
                 var allAngleClips = model.Clips.Cast<UwpClip>().Where(c => c.FileName.Contains(clipViewModel.CommonFileNameSegment));
                 clipViewModel.Clips = allAngleClips.ToList();
+                clipViewModel.EstimatedFrameDuration = allAngleClips.Max(c => c.FrameDuration);
 
                 Clips.Add(clipViewModel);
                 index++;
