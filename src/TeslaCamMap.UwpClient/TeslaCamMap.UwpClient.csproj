@@ -140,6 +140,7 @@
     <Compile Include="ViewModels\EventDetailsViewModel.cs" />
     <Compile Include="ViewModels\LoadClipEventArgs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\StepFrameEventArgs.cs" />
     <Compile Include="ViewModels\TeslaEventMapElementViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>

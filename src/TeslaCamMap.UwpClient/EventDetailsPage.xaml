@@ -47,11 +47,23 @@
                     <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousClipCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;"/>
                     </Button>
+                    <Button VerticalAlignment="Center" Command="{Binding Path=StepFrameCommand}" Margin="2">
+                        <Button.CommandParameter>
+                            <x:Boolean>False</x:Boolean>
+                        </Button.CommandParameter>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;"/>
+                    </Button>                    
                     <Button VerticalAlignment="Center" Command="{Binding Path=PlayVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=PauseVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE769;"/>
+                    </Button>
+                    <Button VerticalAlignment="Center" Command="{Binding Path=StepFrameCommand}" Margin="2">
+                        <Button.CommandParameter>
+                            <x:Boolean>True</x:Boolean>
+                        </Button.CommandParameter>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=NextClipCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;"/>

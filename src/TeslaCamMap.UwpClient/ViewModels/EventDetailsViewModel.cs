@@ -9,11 +9,23 @@ namespace TeslaCamMap.UwpClient.ViewModels
 {
     public class EventDetailsViewModel : ViewModelBase
     {
-        public bool IsPlaying { get; set; }
+        private bool _isPlaying;
+        public bool IsPlaying
+        {
+            get => _isPlaying;
+            set
+            {
+                _isPlaying = value;
+                PlayVideoCommand.RaiseCanExecuteChanged();
+                PauseVideoCommand.RaiseCanExecuteChanged();
+                StepFrameCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         // Events for stuff that needs to happen in the view (for now)
         public event EventHandler PlayVideo;
         public event EventHandler PauseVideo;
+        public event EventHandler<StepFrameEventArgs> StepFrame;
         public event EventHandler<LoadClipEventArgs> LoadClip;
 
         public RelayCommand PlayVideoCommand { get; set; }
@@ -21,10 +33,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public RelayCommand NextClipCommand { get; set; }
         public RelayCommand PreviousClipCommand { get; set; }
         public RelayCommand NavigateToMapCommand { get; set; }
+        public RelayCommand StepFrameCommand { get; set; }
 
         public ObservableCollection<ClipViewModel> Clips { get; set; }
 
         private ClipViewModel _currentClip;
+
         public ClipViewModel CurrentClip
         {
             get { return _currentClip; }
@@ -54,6 +68,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
             NavigateToMapCommand = new RelayCommand(NavigateToMapCommandExecute, CanNavigateToMapCommandExecute);
             PlayVideoCommand = new RelayCommand(PlayVideoCommandExecute, CanPlayVideoCommandExecute);
             PauseVideoCommand = new RelayCommand(PauseVideoCommandExecute, CanPauseVideoCommandExecute);
+            StepFrameCommand = new RelayCommand(StepFrameCommandExecute, CanStepFrameCommandExecute);
 
             Clips = new ObservableCollection<ClipViewModel>();
 
@@ -76,6 +91,16 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private bool CanStepFrameCommandExecute(object arg)
+        {
+            return !IsPlaying;
+        }
+
+        private void StepFrameCommandExecute(object obj)
+        {
+            StepFrame?.Invoke(this, new StepFrameEventArgs((bool)obj));
+        }
+
         public void OnNavigated()
         {
             CurrentClip = Clips.First();
@@ -89,11 +114,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         private void PauseVideoCommandExecute(object obj)
         {
             IsPlaying = false;
-            PlayVideoCommand.RaiseCanExecuteChanged();
-            PauseVideoCommand.RaiseCanExecuteChanged();
-
-            if (PauseVideo != null)
-                PauseVideo.Invoke(this, new EventArgs());
+            PauseVideo?.Invoke(this, new EventArgs());
         }
 
         private bool CanPlayVideoCommandExecute(object arg)
@@ -104,11 +125,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         private void PlayVideoCommandExecute(object obj)
         {
             IsPlaying = true;
-            PlayVideoCommand.RaiseCanExecuteChanged();
-            PauseVideoCommand.RaiseCanExecuteChanged();
-
-            if (PlayVideo != null)
-                PlayVideo.Invoke(this, new EventArgs());
+            PlayVideo?.Invoke(this, new EventArgs());
         }
 
         private bool CanNavigateToMapCommandExecute(object arg)

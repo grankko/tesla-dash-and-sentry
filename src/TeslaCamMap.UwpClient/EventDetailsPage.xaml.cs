@@ -56,8 +56,20 @@ namespace TeslaCamMap.UwpClient
             vm.PlayVideo += Vm_PlayVideo;
             vm.PauseVideo += Vm_PauseVideo;
             vm.LoadClip += Vm_LoadClip;
+            vm.StepFrame += Vm_StepFrame;
 
             vm.OnNavigated();
+        }
+
+        // todo: inconsistent behavior. Root cause is probably that there is no real synchronization between MediaElements.
+        private void Vm_StepFrame(object sender, StepFrameEventArgs e)
+        {
+            if (e.StepForward)
+                _players.ForEach(p => p.MediaPlayer.StepBackwardOneFrame());
+            else
+                _players.ForEach(p => p.MediaPlayer.StepBackwardOneFrame());
+
+            VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
         private void Vm_LoadClip(object sender, LoadClipEventArgs e)
