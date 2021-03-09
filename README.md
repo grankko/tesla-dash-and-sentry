@@ -10,11 +10,9 @@ Requires a Bing Map API key. The solution expects the key in a file named `bing_
 ## External packages
 Uses [FFMpegInteropX](https://github.com/ffmpeginteropx/FFmpegInteropX) for better video playback.
 
-## Known issues
-* To change position in a video you need to drag the thumb of the slider, "just" clicking a position in the slider does not work.
-* Jumping between video segments of an event too fast can cause a crash.
-* If Tesla changes anything in how these files are produced it will break. Only tested on video from a 2020 Model 3 SR+.
+## Remarks
+* Only tested on video from one 2020 Model 3 SR+.
 
 ## Screenshots
-![how to start game](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_map.png)
-![how to start game](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_video.png)
+![Map view](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_map.png)
+![Video view](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_video.png)
