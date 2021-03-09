@@ -44,7 +44,7 @@
             <StackPanel Grid.Column="1" Orientation="Vertical">
                 <Slider x:Name="VideoSlider" Margin="15" ManipulationMode="All" ManipulationStarted="VideoSlider_ManipulationStarted" ManipulationCompleted="VideoSlider_ManipulationCompleted" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
-                    <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousClipCommand}" Margin="2">
+                    <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousSegmentCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;"/>
                     </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=StepFrameCommand}" Margin="2">
@@ -65,7 +65,7 @@
                         </Button.CommandParameter>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;"/>
                     </Button>
-                    <Button VerticalAlignment="Center" Command="{Binding Path=NextClipCommand}" Margin="2">
+                    <Button VerticalAlignment="Center" Command="{Binding Path=NextSegmentCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;"/>
                     </Button>
                 </StackPanel>
@@ -76,10 +76,10 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock FontWeight="Bold" Text="Event video segments" Margin="5" />
-                <ListView x:Name="ClipsListView" Grid.Row="1" ItemsSource="{Binding Path=Clips}" SelectedItem="{Binding Path=CurrentClip, Mode=TwoWay}" SelectionMode="Single" SelectionChanged="ClipsListView_SelectionChanged">
+                <ListView x:Name="SegmentsListView" Grid.Row="1" ItemsSource="{Binding Path=Segments}" SelectedItem="{Binding Path=CurrentSegment, Mode=TwoWay}" SelectionMode="Single" SelectionChanged="SegmentsListView_SelectionChanged">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Path=TimeStamp}" />
+                            <TextBlock Text="{Binding Path=Model.SegmentTimestamp}" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

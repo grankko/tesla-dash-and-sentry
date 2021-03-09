@@ -136,9 +136,9 @@
     <Compile Include="Model\UwpTeslaEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\UwpFileSystemService.cs" />
-    <Compile Include="ViewModels\ClipViewModel.cs" />
+    <Compile Include="ViewModels\EventSegmentViewModel.cs" />
     <Compile Include="ViewModels\EventDetailsViewModel.cs" />
-    <Compile Include="ClientEventArgs\LoadClipEventArgs.cs" />
+    <Compile Include="ClientEventArgs\LoadSegmentEventArgs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ClientEventArgs\StepFrameEventArgs.cs" />
     <Compile Include="ViewModels\TeslaEventMapElementViewModel.cs" />

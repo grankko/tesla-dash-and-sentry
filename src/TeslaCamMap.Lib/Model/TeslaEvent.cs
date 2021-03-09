@@ -6,7 +6,7 @@ using System.Text;
 namespace TeslaCamMap.Lib.Model
 {
     /// <summary>
-    /// Represents one unique event, with metadata and references to all video clips (segments).
+    /// Represents one unique event.
     /// </summary>
     public class TeslaEvent
     {
@@ -17,12 +17,16 @@ namespace TeslaCamMap.Lib.Model
         public EventReason Reason { get; set; }
         public EventStoreLocation StoreLocation { get; set; }
         public string FolderPath { get; set; }
-        public List<Clip> Clips { get; set; }  // todo: The model is wrong, should introduce an entity between Clip and Event, representing a Segment with four Clips. Duck taped right now in the ViewModel.
+        
+        /// <summary>
+        /// Each event consists of multiple segments with video from all active cameras.
+        /// </summary>
+        public List<EventSegment> Segments { get; set; }
         public string ThumbnailPath { get; set; }
 
         public TeslaEvent(TeslaEventJson metadata)
         {
-            Clips = new List<Clip>();
+            Segments = new List<EventSegment>();
             TimeStamp = metadata.timestamp;
             City = metadata.city;
             EstimatedLatitude = double.Parse(metadata.est_lat, CultureInfo.InvariantCulture);

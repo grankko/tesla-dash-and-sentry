@@ -117,7 +117,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private bool CanSelectEventCommandExecute(object arg)
         {
-            return true;
+            return TeslaEvents != null && TeslaEvents.Count > 0;
         }
 
         private void SelectEventCommandExecute(object obj)

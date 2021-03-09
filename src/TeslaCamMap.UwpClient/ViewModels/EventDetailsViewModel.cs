@@ -27,68 +27,58 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public event EventHandler PlayVideo;
         public event EventHandler PauseVideo;
         public event EventHandler<StepFrameEventArgs> StepFrame;
-        public event EventHandler<LoadClipEventArgs> LoadClip;
+        public event EventHandler<LoadSegmentEventArgs> LoadSegment;
 
         public RelayCommand PlayVideoCommand { get; set; }
         public RelayCommand PauseVideoCommand { get; set; }
-        public RelayCommand NextClipCommand { get; set; }
-        public RelayCommand PreviousClipCommand { get; set; }
+        public RelayCommand NextSegmentCommand { get; set; }
+        public RelayCommand PreviousSegmentCommand { get; set; }
         public RelayCommand NavigateToMapCommand { get; set; }
         public RelayCommand StepFrameCommand { get; set; }
 
-        public ObservableCollection<ClipViewModel> Clips { get; set; }
+        public ObservableCollection<EventSegmentViewModel> Segments { get; set; }
 
-        private ClipViewModel _currentClip;
+        private EventSegmentViewModel _currentSegment;
 
-        public ClipViewModel CurrentClip
+        public EventSegmentViewModel CurrentSegment
         {
-            get { return _currentClip; }
+            get { return _currentSegment; }
             set
             {
                 // Pause video if a new clip is loaded
-                if (_currentClip != null)
+                if (_currentSegment != null)
                     PauseVideoCommand.Execute(null);
 
-                _currentClip = value;
+                _currentSegment = value;
                 OnPropertyChanged();
 
-                NextClipCommand.RaiseCanExecuteChanged();
-                PreviousClipCommand.RaiseCanExecuteChanged();
+                NextSegmentCommand.RaiseCanExecuteChanged();
+                PreviousSegmentCommand.RaiseCanExecuteChanged();
 
                 // Signals view to load videos into players
-                if (LoadClip != null)
-                    LoadClip.Invoke(this, new LoadClipEventArgs(_currentClip));
+                if (LoadSegment != null)
+                    LoadSegment.Invoke(this, new LoadSegmentEventArgs(_currentSegment));
             }
         }
 
         public EventDetailsViewModel(UwpTeslaEvent model)
         {
 
-            NextClipCommand = new RelayCommand(NextClipCommandExecute, CanNextClipCommandExecute);
-            PreviousClipCommand = new RelayCommand(PreviousClipCommandExecute, CanPreviousClipCommandExecute);
-            NavigateToMapCommand = new RelayCommand(NavigateToMapCommandExecute, CanNavigateToMapCommandExecute);
+            NextSegmentCommand = new RelayCommand(NextSegmentCommandExecute, CanNextSegmentCommandExecute);
+            PreviousSegmentCommand = new RelayCommand(PreviousSegmentCommandExecute, CanPreviousSegmentCommandExecute);
+            NavigateToMapCommand = new RelayCommand(NavigateToMapCommandExecute, (o) => true);
             PlayVideoCommand = new RelayCommand(PlayVideoCommandExecute, CanPlayVideoCommandExecute);
             PauseVideoCommand = new RelayCommand(PauseVideoCommandExecute, CanPauseVideoCommandExecute);
             StepFrameCommand = new RelayCommand(StepFrameCommandExecute, CanStepFrameCommandExecute);
 
-            Clips = new ObservableCollection<ClipViewModel>();
-
-            // Find all unique video segments and populate ClipViewModels.
-            // todo: this should really not be done in the ViewModel. Fix the model, map when reading from filesystem
-            var leftRepeaterClips = model.Clips.Cast<UwpClip>().Where(c => c.Camera == Camera.LeftRepeater).OrderBy(c => c.FileName).ToList();
+            Segments = new ObservableCollection<EventSegmentViewModel>();
             int index = 0;
-            foreach (var clip in leftRepeaterClips)
+            foreach (var segment in model.Segments)
             {
-                var clipViewModel = new ClipViewModel();
-                clipViewModel.CommonFileNameSegment = clip.FileName.Substring(0, 19);
-                clipViewModel.ClipIndex = index;
-                clipViewModel.TimeStamp = clip.TimeStampFromFileName;
+                var segmentViewModel = new EventSegmentViewModel(segment);
+                segmentViewModel.SegmentIndex = index;
+                Segments.Add(segmentViewModel);
 
-                var allAngleClips = model.Clips.Cast<UwpClip>().Where(c => c.FileName.Contains(clipViewModel.CommonFileNameSegment));
-                clipViewModel.Clips = allAngleClips.ToList();
-                clipViewModel.EstimatedFrameDuration = allAngleClips.Max(c => c.FrameDuration);
-
-                Clips.Add(clipViewModel);
                 index++;
             }
         }
@@ -105,7 +95,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public void OnNavigated()
         {
-            CurrentClip = Clips.First();
+            CurrentSegment = Segments.First();
         }
 
         private bool CanPauseVideoCommandExecute(object arg)
@@ -130,34 +120,29 @@ namespace TeslaCamMap.UwpClient.ViewModels
             PlayVideo?.Invoke(this, new EventArgs());
         }
 
-        private bool CanNavigateToMapCommandExecute(object arg)
-        {
-            return true;
-        }
-
         private void NavigateToMapCommandExecute(object obj)
         {
             ViewFrame.Navigate(typeof(MainPage), obj);
         }
 
-        private bool CanPreviousClipCommandExecute(object arg)
+        private bool CanPreviousSegmentCommandExecute(object arg)
         {
-            return (CurrentClip != null && Clips.Min(c => c.ClipIndex) != CurrentClip.ClipIndex);
+            return (CurrentSegment != null && Segments.Min(c => c.SegmentIndex) != CurrentSegment.SegmentIndex);
         }
 
-        private void PreviousClipCommandExecute(object obj)
+        private void PreviousSegmentCommandExecute(object obj)
         {
-            CurrentClip = Clips.Single(c => c.ClipIndex == (CurrentClip.ClipIndex - 1));
+            CurrentSegment = Segments.Single(c => c.SegmentIndex == (CurrentSegment.SegmentIndex - 1));
         }
 
-        private bool CanNextClipCommandExecute(object arg)
+        private bool CanNextSegmentCommandExecute(object arg)
         {
-            return (CurrentClip != null && Clips.Max(c => c.ClipIndex) != CurrentClip.ClipIndex);
+            return (CurrentSegment != null && Segments.Max(c => c.SegmentIndex) != CurrentSegment.SegmentIndex);
         }
 
-        private void NextClipCommandExecute(object obj)
+        private void NextSegmentCommandExecute(object obj)
         {
-            CurrentClip = Clips.Single(c => c.ClipIndex == (CurrentClip.ClipIndex + 1));
+            CurrentSegment = Segments.Single(c => c.SegmentIndex == (CurrentSegment.SegmentIndex + 1));
         }
     }
 }

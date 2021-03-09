@@ -2,6 +2,9 @@
 
 namespace TeslaCamMap.Lib.Model
 {
+    /// <summary>
+    /// Raw representation of the event.json data.
+    /// </summary>
     public class TeslaEventJson
     {
         public DateTime timestamp { get; set; }

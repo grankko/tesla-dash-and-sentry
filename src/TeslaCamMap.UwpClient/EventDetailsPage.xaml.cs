@@ -17,6 +17,7 @@ namespace TeslaCamMap.UwpClient
     public sealed partial class EventDetailsPage : Page
     {
         private const int BufferSizeInBytes = 1048576;
+        private const int SliderTimerUpdateInterval = 500;
 
         // One instance per video seems to work best.
         // A reference to the FFMpegInteropMSS needs to be maintained for the players to be stable.
@@ -28,22 +29,14 @@ namespace TeslaCamMap.UwpClient
         private MediaTimelineController _mediaTimelineController = new MediaTimelineController();
         private int _currentEstimatedFrameDuration;
 
-        private List<MediaPlayerElement> _players = new List<MediaPlayerElement>();
-
         private DispatcherTimer _timer; // Used to update the video slider when video is playing
 
         public EventDetailsPage()
         {
             this.InitializeComponent();
             _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(500);
+            _timer.Interval = TimeSpan.FromMilliseconds(SliderTimerUpdateInterval);
             _timer.Tick += _timer_Tick;
-
-            // Keep all players in a collection for easier manipulation
-            _players.Add(LeftPlayer);
-            _players.Add(FrontPlayer);
-            _players.Add(RightPlayer);
-            _players.Add(BackPlayer);
         }
 
         private void _timer_Tick(object sender, object e)
@@ -61,7 +54,7 @@ namespace TeslaCamMap.UwpClient
 
             vm.PlayVideo += Vm_PlayVideo;
             vm.PauseVideo += Vm_PauseVideo;
-            vm.LoadClip += Vm_LoadClip;
+            vm.LoadSegment += Vm_LoadSegment;
             vm.StepFrame += Vm_StepFrame;
 
             vm.OnNavigated();
@@ -77,17 +70,17 @@ namespace TeslaCamMap.UwpClient
             VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
-        private void Vm_LoadClip(object sender, LoadClipEventArgs e)
+        private void Vm_LoadSegment(object sender, LoadSegmentEventArgs e)
         {
-            _currentEstimatedFrameDuration = (int)e.Clip.EstimatedFrameDuration;
+            _currentEstimatedFrameDuration = (int)e.Segment.Model.MaxClipFrameDuration;
             VideoSlider.Value = 0;
-            foreach (var clip in e.Clip.Clips)
-                LoadClip(clip);
+            foreach (var clip in e.Segment.Model.Clips)
+                LoadClip((UwpClip)clip);
+
+            VideoSlider.Minimum = 0;
+            VideoSlider.Maximum = e.Segment.Model.MaxClipDuration.TotalSeconds;
         }
 
-        /// <summary>
-        /// Loads all four video files in one event video segment to the MediaPlayerElements
-        /// </summary>
         private async void LoadClip(UwpClip clip)
         {
             FFmpegInteropConfig conf = new FFmpegInteropConfig();
@@ -95,7 +88,7 @@ namespace TeslaCamMap.UwpClient
 
             var player = new MediaPlayer();
             player.CommandManager.IsEnabled = false;
-            player.TimelineController = _mediaTimelineController;
+            player.TimelineController = _mediaTimelineController; // Synchronize all players with the same MediaTimelineController
 
             using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
@@ -105,8 +98,6 @@ namespace TeslaCamMap.UwpClient
                         _leftFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
                         player.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
                         LeftPlayer.SetMediaPlayer(player);
-                        VideoSlider.Minimum = 0;
-                        VideoSlider.Maximum = _leftFfmpegInterop.Duration.TotalSeconds;
                         break;
                     case Camera.Front:
                         _frontFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
@@ -167,14 +158,14 @@ namespace TeslaCamMap.UwpClient
             }
         }
 
-        private void ClipsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ClipsListView.ScrollIntoView(ClipsListView.SelectedItem);
-        }
-
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ((EventDetailsViewModel)DataContext).ViewFrame = this.Frame;
+        }
+
+        private void SegmentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SegmentsListView.ScrollIntoView(SegmentsListView.SelectedItem);
         }
     }
 }
