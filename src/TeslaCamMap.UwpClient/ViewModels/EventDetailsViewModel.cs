@@ -111,7 +111,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private bool CanPlayVideoCommandExecute(object arg)
         {
-            return (!IsPlaying);
+            return !IsPlaying;
         }
 
         private void PlayVideoCommandExecute(object obj)

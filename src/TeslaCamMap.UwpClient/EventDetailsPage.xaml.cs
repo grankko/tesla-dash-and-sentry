@@ -1,12 +1,13 @@
 ﻿using FFmpegInterop;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.ViewModels;
 using Windows.Media;
 using Windows.Media.Playback;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -49,6 +50,7 @@ namespace TeslaCamMap.UwpClient
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
             var vm = new EventDetailsViewModel((UwpTeslaEvent)e.Parameter);
             this.DataContext = vm;
 
@@ -83,43 +85,56 @@ namespace TeslaCamMap.UwpClient
 
         private async void LoadClip(UwpClip clip)
         {
-            FFmpegInteropConfig conf = new FFmpegInteropConfig();
-            conf.StreamBufferSize = BufferSizeInBytes;
-
-            var player = new MediaPlayer();
-            player.CommandManager.IsEnabled = false;
-            player.TimelineController = _mediaTimelineController; // Synchronize all players with the same MediaTimelineController
-
-            using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            switch (clip.Camera)
             {
-                switch (clip.Camera)
-                {
-                    case Camera.LeftRepeater:
-                        _leftFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        player.Source = _leftFfmpegInterop.CreateMediaPlaybackItem();
-                        LeftPlayer.SetMediaPlayer(player);
-                        break;
-                    case Camera.Front:
-                        _frontFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        player.Source = _frontFfmpegInterop.CreateMediaPlaybackItem();
-                        FrontPlayer.SetMediaPlayer(player);
-                        break;
-                    case Camera.RightRepeater:
-                        _rightFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        player.Source = _rightFfmpegInterop.CreateMediaPlaybackItem();
-                        RightPlayer.SetMediaPlayer(player);
-                        break;
-                    case Camera.Back:
-                        _backFfmpegInterop = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
-                        player.Source = _backFfmpegInterop.CreateMediaPlaybackItem();
-                        BackPlayer.SetMediaPlayer(player);
-                        break;
-                    default:
-                        throw new InvalidOperationException();
-                }
+                case Camera.LeftRepeater:
+                    _leftFfmpegInterop = await CreateMediaSourceAndPlayer(LeftPlayer, _leftFfmpegInterop, clip);
+                    break;
+                case Camera.Front:
+                    _frontFfmpegInterop = await CreateMediaSourceAndPlayer(FrontPlayer, _frontFfmpegInterop, clip);
+                    break;
+                case Camera.RightRepeater:
+                    _rightFfmpegInterop = await CreateMediaSourceAndPlayer(RightPlayer, _rightFfmpegInterop, clip);
+                    break;
+                case Camera.Back:
+                    _backFfmpegInterop = await CreateMediaSourceAndPlayer(BackPlayer, _backFfmpegInterop, clip);
+                    break;
+                default:
+                    throw new InvalidOperationException();
             }
 
             _mediaTimelineController.Position = TimeSpan.Zero;
+        }
+
+        private async Task<FFmpegInteropMSS> CreateMediaSourceAndPlayer(MediaPlayerElement playerElement, FFmpegInteropMSS ffmpegMss, UwpClip clip)
+        {
+            if (ffmpegMss != null)
+                ffmpegMss.Dispose();
+
+            FFmpegInteropConfig conf = new FFmpegInteropConfig();
+            conf.StreamBufferSize = BufferSizeInBytes;
+
+            MediaPlayer player = playerElement.MediaPlayer;
+            if (player == null)
+                player = CreatePlayer();
+
+            using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
+            {
+                ffmpegMss = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+            }
+
+            player.Source = ffmpegMss.CreateMediaPlaybackItem();
+            playerElement.SetMediaPlayer(player);
+
+            return ffmpegMss;
+        }
+
+        private MediaPlayer CreatePlayer()
+        {
+            var player = new MediaPlayer();
+            player.CommandManager.IsEnabled = false;
+            player.TimelineController = _mediaTimelineController; // Synchronize all players with the same MediaTimelineController
+            return player;
         }
 
         private void Vm_PauseVideo(object sender, EventArgs e)
