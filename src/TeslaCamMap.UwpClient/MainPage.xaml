@@ -9,6 +9,7 @@
     xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
     xmlns:vm="using:TeslaCamMap.UwpClient.ViewModels"
     xmlns:converters="using:TeslaCamMap.UwpClient.Converters"
+    xmlns:controls="using:TeslaCamMap.UwpClient.Controls"
     NavigationCacheMode="Required"
     Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -19,6 +20,7 @@
         <converters:EventReasonToGlyphConverter x:Key="EventReasonConverter" />
         <converters:BusyOpacityConverter x:Key="BusyOpacityConverter" />
         <converters:SelectedColorBrushConverter x:Key="SelectedColorConverter" />
+        <converters:SelectedItemZIndexConverter x:Key="ZIndexConverter" />
     </Page.Resources>
     <Page.DataContext>
         <vm:MainViewModel />
@@ -41,7 +43,9 @@
             <maps:MapItemsControl ItemsSource="{Binding Path=TeslaEvents}">
                 <maps:MapItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Command="{Binding ElementName=MainView, Path=DataContext.SelectEventCommand}" CommandParameter="{Binding}">
+                        <Button controls:MapControlExtension.ZIndex="{Binding Path=IsSelected, Converter={StaticResource ZIndexConverter}}"
+                                Command="{Binding ElementName=MainView, Path=DataContext.SelectEventCommand}"
+                                CommandParameter="{Binding}">
                             <Button.Template>
                                 <ControlTemplate>
                                     <Grid Height="25" Width="25" maps:MapControl.Location="{Binding Location}">
