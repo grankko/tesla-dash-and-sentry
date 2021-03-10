@@ -145,6 +145,16 @@ namespace TeslaCamMap.UwpClient
 
         private void VideoSlider_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
+            UpdateVideoPositionOnSliderInteraction();
+        }
+
+        private void VideoSlider_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateVideoPositionOnSliderInteraction();
+        }
+
+        private void UpdateVideoPositionOnSliderInteraction()
+        {
             // Set playback position for each video when user have moved the slider thumb
             var newValue = VideoSlider.Value;
             _mediaTimelineController.Position = TimeSpan.FromSeconds(newValue);

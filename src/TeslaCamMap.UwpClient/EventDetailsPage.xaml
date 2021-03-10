@@ -42,7 +42,7 @@
                 <TextBlock  Margin="5" VerticalAlignment="Center" Text="Back to map" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Vertical">
-                <Slider x:Name="VideoSlider" Margin="15" ManipulationMode="All" ManipulationStarted="VideoSlider_ManipulationStarted" ManipulationCompleted="VideoSlider_ManipulationCompleted" />
+                <Slider x:Name="VideoSlider" Margin="15" ManipulationMode="All" ManipulationStarted="VideoSlider_ManipulationStarted" ManipulationCompleted="VideoSlider_ManipulationCompleted" Tapped="VideoSlider_Tapped" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
                     <Button VerticalAlignment="Center"  Command="{Binding Path=PreviousSegmentCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE892;"/>
