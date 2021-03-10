@@ -20,7 +20,7 @@ namespace TeslaCamMap.UwpClient.Services
 
     public class UwpFileSystemService
     {
-        private const string MediaDuratioPropertyName = "System.Media.Duration";
+        private const string MediaDurationPropertyName = "System.Media.Duration";
         private const string VideoFrameRatePropertyName = "System.Video.FrameRate";
         private const string SavedClipsFolderName = "SavedClips";
         private const string SentryClipsFolderName = "SentryClips";
@@ -146,10 +146,10 @@ namespace TeslaCamMap.UwpClient.Services
             else
                 clip.Camera = Camera.Unknown;
 
-            IDictionary<string, object> retrieveProperties = await clipFile.Properties.RetrievePropertiesAsync(new string[] { VideoFrameRatePropertyName, "System.Media.Duration" });
+            IDictionary<string, object> retrieveProperties = await clipFile.Properties.RetrievePropertiesAsync(new string[] { VideoFrameRatePropertyName, MediaDurationPropertyName });
             clip.FrameRate = ((uint)retrieveProperties[VideoFrameRatePropertyName]);
             
-            var duration = ((ulong)retrieveProperties[MediaDuratioPropertyName]);
+            var duration = ((ulong)retrieveProperties[MediaDurationPropertyName]);
             clip.Duration = TimeSpan.FromTicks((long)duration);
 
             clip.FilePath = clipFile.Path;
