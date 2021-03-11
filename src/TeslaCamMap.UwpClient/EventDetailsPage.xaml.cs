@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.ClientEventArgs;
+using TeslaCamMap.UwpClient.Controls;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.ViewModels;
 using Windows.Media;
@@ -42,9 +43,7 @@ namespace TeslaCamMap.UwpClient
 
         private void _timer_Tick(object sender, object e)
         {
-            // Update slider to represent the current position in the video
-            // todo: Bind from ViewModel instead?
-            VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
+            VideoSlider.Value = _mediaTimelineController.Position.TotalSeconds;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -69,7 +68,7 @@ namespace TeslaCamMap.UwpClient
             else
                 _mediaTimelineController.Position -= TimeSpan.FromMilliseconds(_currentEstimatedFrameDuration);
 
-            VideoSlider.Value = LeftPlayer.MediaPlayer.PlaybackSession.Position.TotalSeconds;
+            VideoSlider.Value = LeftPlayer.VideoPlayerElement.MediaPlayer.PlaybackSession.Position.TotalSeconds;
         }
 
         private void Vm_LoadSegment(object sender, LoadSegmentEventArgs e)
@@ -88,16 +87,16 @@ namespace TeslaCamMap.UwpClient
             switch (clip.Camera)
             {
                 case Camera.LeftRepeater:
-                    _leftFfmpegInterop = await CreateMediaSourceAndPlayer(LeftPlayer, _leftFfmpegInterop, clip);
+                    _leftFfmpegInterop = await CreateMediaSourceAndPlayer(LeftPlayer.VideoPlayerElement, _leftFfmpegInterop, clip);
                     break;
                 case Camera.Front:
-                    _frontFfmpegInterop = await CreateMediaSourceAndPlayer(FrontPlayer, _frontFfmpegInterop, clip);
+                    _frontFfmpegInterop = await CreateMediaSourceAndPlayer(FrontPlayer.VideoPlayerElement, _frontFfmpegInterop, clip);
                     break;
                 case Camera.RightRepeater:
-                    _rightFfmpegInterop = await CreateMediaSourceAndPlayer(RightPlayer, _rightFfmpegInterop, clip);
+                    _rightFfmpegInterop = await CreateMediaSourceAndPlayer(RightPlayer.VideoPlayerElement, _rightFfmpegInterop, clip);
                     break;
                 case Camera.Back:
-                    _backFfmpegInterop = await CreateMediaSourceAndPlayer(BackPlayer, _backFfmpegInterop, clip);
+                    _backFfmpegInterop = await CreateMediaSourceAndPlayer(BackPlayer.VideoPlayerElement, _backFfmpegInterop, clip);
                     break;
                 default:
                     throw new InvalidOperationException();
@@ -193,25 +192,24 @@ namespace TeslaCamMap.UwpClient
             SegmentsListView.ScrollIntoView(SegmentsListView.SelectedItem);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Player_ToggleFullscreen(object sender, EventArgs e)
         {
-            if (OneCameraLayoutGrid.Children.Contains(LeftPlayer))
+            VideoPlayerControl player = (VideoPlayerControl)sender;
+
+            if (OneCameraLayoutGrid.Children.Contains(player))
             {
-                OneCameraLayoutGrid.Children.Remove(LeftPlayer);
-                OneCameraLayoutGrid.Children.Remove(LeftPlayerControls);
+                OneCameraLayoutGrid.Children.Remove(player);
                 OneCameraLayoutGrid.Visibility = Visibility.Collapsed;
 
                 MultiCameraLayoutGrid.Visibility = Visibility.Visible;
-                MultiCameraLayoutGrid.Children.Add(LeftPlayer);
-                MultiCameraLayoutGrid.Children.Add(LeftPlayerControls);
-            } else
+                MultiCameraLayoutGrid.Children.Add(player);
+            }
+            else
             {
                 MultiCameraLayoutGrid.Visibility = Visibility.Collapsed;
-                MultiCameraLayoutGrid.Children.Remove(LeftPlayer);
-                MultiCameraLayoutGrid.Children.Remove(LeftPlayerControls);
+                MultiCameraLayoutGrid.Children.Remove(player);
 
-                OneCameraLayoutGrid.Children.Add(LeftPlayer);
-                OneCameraLayoutGrid.Children.Add(LeftPlayerControls);
+                OneCameraLayoutGrid.Children.Add(player);
                 OneCameraLayoutGrid.Visibility = Visibility.Visible;
             }
         }
