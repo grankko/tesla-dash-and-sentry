@@ -13,7 +13,11 @@
             <RowDefinition Height="200" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="Black">
+        <Grid Grid.Row="0" Background="Black" x:Name="OneCameraLayoutGrid" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid Grid.Row="0" Background="Black" x:Name="MultiCameraLayoutGrid">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -23,10 +27,25 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <!-- todo: this needs to be broken out to a separate control -->
             <MediaPlayerElement Grid.Row="0" Grid.Column="0" Name="LeftPlayer" />
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" x:Name="LeftPlayerControls">
+                <TextBlock Text="Left repeater"  Foreground="White" Margin="5" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                <Button VerticalAlignment="Top" Margin="5" Click="Button_Click" x:Name="LeftPlayerToggleFullscreenButton">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE740;" Foreground="AliceBlue"/>
+                            <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE73F;" Foreground="AliceBlue" Visibility="Collapsed" x:Name="LeftPlayerBackToWindowIcon"/>-->
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
             <MediaPlayerElement Grid.Row="0" Grid.Column="1" Name="FrontPlayer" />
+            <TextBlock Text="Front" Grid.Row="0" Grid.Column="1" Foreground="White" Margin="5" />
             <MediaPlayerElement Grid.Row="0" Grid.Column="2" Name="RightPlayer" />
+            <TextBlock Text="Right repeater" Grid.Row="0" Grid.Column="2" Foreground="White" Margin="5" />
             <MediaPlayerElement Grid.Row="1" Grid.Column="1" Name="BackPlayer" />
+            <TextBlock Text="Back" Grid.Row="1" Grid.Column="1" Foreground="White" Margin="5" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -52,7 +71,7 @@
                             <x:Boolean>False</x:Boolean>
                         </Button.CommandParameter>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;"/>
-                    </Button>                    
+                    </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=PlayVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                     </Button>

@@ -192,5 +192,28 @@ namespace TeslaCamMap.UwpClient
         {
             SegmentsListView.ScrollIntoView(SegmentsListView.SelectedItem);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (OneCameraLayoutGrid.Children.Contains(LeftPlayer))
+            {
+                OneCameraLayoutGrid.Children.Remove(LeftPlayer);
+                OneCameraLayoutGrid.Children.Remove(LeftPlayerControls);
+                OneCameraLayoutGrid.Visibility = Visibility.Collapsed;
+
+                MultiCameraLayoutGrid.Visibility = Visibility.Visible;
+                MultiCameraLayoutGrid.Children.Add(LeftPlayer);
+                MultiCameraLayoutGrid.Children.Add(LeftPlayerControls);
+            } else
+            {
+                MultiCameraLayoutGrid.Visibility = Visibility.Collapsed;
+                MultiCameraLayoutGrid.Children.Remove(LeftPlayer);
+                MultiCameraLayoutGrid.Children.Remove(LeftPlayerControls);
+
+                OneCameraLayoutGrid.Children.Add(LeftPlayer);
+                OneCameraLayoutGrid.Children.Add(LeftPlayerControls);
+                OneCameraLayoutGrid.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
