@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:TeslaCamMap.UwpClient.Controls"
+    xmlns:viewmodels="using:TeslaCamMap.UwpClient.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:EventDetailsViewModel}"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -13,7 +16,11 @@
             <RowDefinition Height="200" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="Black">
+        <Grid Grid.Row="0" Background="Black" x:Name="OneCameraLayoutGrid" Visibility="Collapsed">
+
+        </Grid>
+
+        <Grid Grid.Row="0" Background="Black" x:Name="MultiCameraLayoutGrid">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -23,10 +30,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <MediaPlayerElement Grid.Row="0" Grid.Column="0" Name="LeftPlayer" />
-            <MediaPlayerElement Grid.Row="0" Grid.Column="1" Name="FrontPlayer" />
-            <MediaPlayerElement Grid.Row="0" Grid.Column="2" Name="RightPlayer" />
-            <MediaPlayerElement Grid.Row="1" Grid.Column="1" Name="BackPlayer" />
+            <controls:VideoPlayerControl Grid.Row="0" Grid.Column="0" x:Name="LeftPlayer" DataContext="{Binding Path=LeftPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
+            <controls:VideoPlayerControl Grid.Row="0" Grid.Column="1" x:Name="FrontPlayer" DataContext="{Binding Path=FrontPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
+            <controls:VideoPlayerControl Grid.Row="0" Grid.Column="2" x:Name="RightPlayer" DataContext="{Binding Path=RightPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
+            <controls:VideoPlayerControl Grid.Row="1" Grid.Column="1" x:Name="BackPlayer" DataContext="{Binding Path=BackPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -52,7 +59,7 @@
                             <x:Boolean>False</x:Boolean>
                         </Button.CommandParameter>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;"/>
-                    </Button>                    
+                    </Button>
                     <Button VerticalAlignment="Center" Command="{Binding Path=PlayVideoCommand}" Margin="2">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE768;"/>
                     </Button>

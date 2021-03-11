@@ -1,0 +1,27 @@
+﻿<UserControl
+    x:Class="TeslaCamMap.UwpClient.Controls.VideoPlayerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TeslaCamMap.UwpClient.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:TeslaCamMap.UwpClient.ViewModels"
+    xmlns:converters="using:TeslaCamMap.UwpClient.Converters"
+    mc:Ignorable="d"
+    d:DesignHeight="500"
+    d:DesignWidth="800"
+    d:DataContext="{d:DesignInstance Type=viewmodels:VideoPlayerViewModel}">
+    <UserControl.Resources>
+        <converters:FullscreenToGlyphConverter x:Key="GlyphConverter" />
+        <converters:CameraToLabelConverter x:Key="CameraLabelConverter" />
+    </UserControl.Resources>
+    <Grid Background="Black">
+        <MediaPlayerElement Grid.Row="0" Grid.Column="0" Name="PlayerElement" />
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <TextBlock Text="{Binding Path=CameraAngle, Converter={StaticResource CameraLabelConverter}}" Foreground="White" Margin="5" VerticalAlignment="Center" />
+            <Button VerticalAlignment="Center" Margin="5" Click="Button_Click" Style="{ThemeResource VideoPlayerButtonStyle}">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="{Binding Path=IsInFullscreen, Converter={StaticResource GlyphConverter}}" Foreground="AliceBlue"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

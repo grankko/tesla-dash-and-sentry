@@ -38,6 +38,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public ObservableCollection<EventSegmentViewModel> Segments { get; set; }
 
+        public VideoPlayerViewModel LeftPlayerViewModel { get; set; }
+        public VideoPlayerViewModel FrontPlayerViewModel { get; set; }
+        public VideoPlayerViewModel RightPlayerViewModel { get; set; }
+        public VideoPlayerViewModel BackPlayerViewModel { get; set; }
+
         private EventSegmentViewModel _currentSegment;
 
         public EventSegmentViewModel CurrentSegment
@@ -70,6 +75,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
             PlayVideoCommand = new RelayCommand(PlayVideoCommandExecute, CanPlayVideoCommandExecute);
             PauseVideoCommand = new RelayCommand(PauseVideoCommandExecute, CanPauseVideoCommandExecute);
             StepFrameCommand = new RelayCommand(StepFrameCommandExecute, CanStepFrameCommandExecute);
+
+            LeftPlayerViewModel = new VideoPlayerViewModel(Camera.LeftRepeater);
+            FrontPlayerViewModel = new VideoPlayerViewModel(Camera.Front);
+            RightPlayerViewModel = new VideoPlayerViewModel(Camera.RightRepeater);
+            BackPlayerViewModel = new VideoPlayerViewModel(Camera.Back);
 
             Segments = new ObservableCollection<EventSegmentViewModel>();
             int index = 0;

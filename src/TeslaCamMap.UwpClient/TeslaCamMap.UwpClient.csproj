@@ -121,10 +121,15 @@
     </Compile>
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Controls\MapControlExtension.cs" />
+    <Compile Include="Controls\VideoPlayerControl.xaml.cs">
+      <DependentUpon>VideoPlayerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\BusyLabelConverter.cs" />
     <Compile Include="Converters\BusyOpacityConverter.cs" />
+    <Compile Include="Converters\CameraToLabelConverter.cs" />
     <Compile Include="Converters\EventReasonLabelConverter.cs" />
     <Compile Include="Converters\EventReasonToGlyphConverter.cs" />
+    <Compile Include="Converters\FullscreenToGlyphConverter.cs" />
     <Compile Include="Converters\NullVisibilityConverter.cs" />
     <Compile Include="Converters\SelectedColorBrushConverter.cs" />
     <Compile Include="Converters\SelectedItemZIndexConverter.cs" />
@@ -144,6 +149,7 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ClientEventArgs\StepFrameEventArgs.cs" />
     <Compile Include="ViewModels\TeslaEventMapElementViewModel.cs" />
+    <Compile Include="ViewModels\VideoPlayerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -167,11 +173,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\VideoPlayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EventDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
