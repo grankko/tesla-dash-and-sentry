@@ -70,7 +70,8 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Recorded events" FontWeight="Bold" />
-            <ListView  Grid.Row="1" ItemsSource="{Binding Path=TeslaEvents}" SelectedItem="{Binding Path=SelectedTeslaEvent, Mode=TwoWay}" SelectionChanged="EventsListView_SelectionChanged" Name="EventsListView">
+            <ListView  Grid.Row="1" ItemsSource="{Binding Path=TeslaEvents}" SelectedItem="{Binding Path=SelectedTeslaEvent, Mode=TwoWay}"
+                       SelectionChanged="EventsListView_SelectionChanged" DoubleTapped="EventsListView_DoubleTapped" Name="EventsListView">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

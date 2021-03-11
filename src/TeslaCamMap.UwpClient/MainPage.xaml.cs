@@ -21,5 +21,10 @@ namespace TeslaCamMap.UwpClient
         {
             EventsListView.ScrollIntoView(EventsListView.SelectedItem);
         }
+
+        private void EventsListView_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+            ((MainViewModel)DataContext).ViewVideoCommand.Execute(EventsListView.SelectedItem);
+        }
     }
 }
