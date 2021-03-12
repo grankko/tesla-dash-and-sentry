@@ -1,4 +1,4 @@
-# Tesla Cam Map
+# Tesla Dashcam and Sentry video viewer
 ## What is it?
 Universal Windows Platform app to view video footage from a Tesla Dashcam / Sentry drive. Plots all events found on a map and enables user to view footage from all four cameras at once.
 
