@@ -16,3 +16,4 @@ Uses [FFMpegInteropX](https://github.com/ffmpeginteropx/FFmpegInteropX) for bett
 ## Screenshots
 ![Map view](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_map.png)
 ![Video view](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_video.png)
+![Full video view](https://github.com/grankko/TeslaCamMap/raw/main/screenshot_video_full.png)
