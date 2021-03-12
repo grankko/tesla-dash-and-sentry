@@ -149,11 +149,10 @@ namespace TeslaCamMap.UwpClient.ViewModels
             return SelectedTeslaEvent != null;
         }
 
-        private void ViewVideoCommandExecute(object obj)
+        private async void ViewVideoCommandExecute(object obj)
         {
             UwpTeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
-            _fileSystemService.PopulateEventMetadata(teslaEvent);
-            ViewFrame.Navigate(typeof(EventDetailsPage), teslaEvent);
+            ViewFrame.Navigate(typeof(EventDetailsPage), await _fileSystemService.PopulateEventMetadata(teslaEvent));
         }
 
         private bool CanPickFolderCommandExecute(object arg)

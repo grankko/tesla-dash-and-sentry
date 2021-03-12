@@ -129,7 +129,7 @@ namespace TeslaCamMap.UwpClient.Services
         /// Reads video metadata properties from filesystem and populates properties in the event.
         /// </summary>
         /// <remarks>Costly operation. Don't do this for all events at the time of scanning through the top directory. Populate metadata only when user needs it.</remarks>
-        public async void PopulateEventMetadata(TeslaEvent teslaEvent)
+        public async Task<UwpTeslaEvent> PopulateEventMetadata(UwpTeslaEvent teslaEvent)
         {
             foreach (var segment in teslaEvent.Segments)
             {
@@ -147,6 +147,8 @@ namespace TeslaCamMap.UwpClient.Services
                 segment.MaxClipFrameDuration = segment.Clips.Max(c => (int)c.FrameDuration);
                 segment.MaxClipDuration = segment.Clips.Max(c => c.Duration);
             }
+
+            return teslaEvent;
         }
 
         /// <summary>
