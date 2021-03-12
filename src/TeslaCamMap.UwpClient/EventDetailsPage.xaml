@@ -15,6 +15,8 @@
         <converters:HotSegmentBrushConverter x:Key="HotSegmentConverter" />
         <converters:HotSpotMarginConverter x:Key="HotMarginConverter" />
         <converters:BoolAndNullVisibilityConverter x:Key="VisibilityConverter" />
+        <converters:EventReasonLabelConverter x:Key="ReasonLabelConverter" />
+        <converters:EventReasonToGlyphConverter x:Key="ReasonGlyphConverter" />
     </Page.Resources>
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
@@ -47,11 +49,19 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="15">
-                <Button Command="{Binding Path=NavigateToMapCommand}" VerticalAlignment="Center">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE826;"/>
-                </Button>
-                <TextBlock  Margin="5" VerticalAlignment="Center" Text="Back to map" />
+            <StackPanel Orientation="Vertical"  Margin="15" Grid.Column="0">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Glyph="{Binding Path=Reason, Converter={StaticResource ReasonGlyphConverter}}" Margin="2"/>
+                    <TextBlock Text="{Binding Path=Reason, Converter={StaticResource ReasonLabelConverter}}" VerticalAlignment="Center" Margin="2" FontWeight="Bold" />
+                </StackPanel>
+                <TextBlock Text="{Binding Path=EventTimestamp}" />
+                <TextBlock Text="{Binding Path=City}" />
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button Command="{Binding Path=NavigateToMapCommand}" VerticalAlignment="Center">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE826;"/>
+                    </Button>
+                    <TextBlock  Margin="5" VerticalAlignment="Center" Text="Back to map" />
+                </StackPanel>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Vertical">
                 <Grid Margin="10,0,10,0">

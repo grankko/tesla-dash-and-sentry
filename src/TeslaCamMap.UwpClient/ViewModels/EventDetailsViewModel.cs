@@ -41,6 +41,10 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public event EventHandler<StepFrameEventArgs> StepFrame;
         public event EventHandler<LoadSegmentEventArgs> LoadSegment;
 
+        public EventReason Reason { get; private set; }
+        public string City { get; private set; }
+        public DateTime EventTimestamp { get; private set; }
+
         public RelayCommand PlayVideoCommand { get; set; }
         public RelayCommand PauseVideoCommand { get; set; }
         public RelayCommand NextSegmentCommand { get; set; }
@@ -96,6 +100,10 @@ namespace TeslaCamMap.UwpClient.ViewModels
             FrontPlayerViewModel = new VideoPlayerViewModel(Camera.Front);
             RightPlayerViewModel = new VideoPlayerViewModel(Camera.RightRepeater);
             BackPlayerViewModel = new VideoPlayerViewModel(Camera.Back);
+
+            City = model.City;
+            Reason = model.Reason;
+            EventTimestamp = model.Timestamp;
 
             Segments = new ObservableCollection<EventSegmentViewModel>();
             int index = 0;
