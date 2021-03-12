@@ -23,6 +23,18 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private double _sliderWidth;
+        public double SliderWidth
+        {
+            get => _sliderWidth;
+            set
+            {
+                _sliderWidth = value;
+                CurrentSegment.CalculateHotspot(SliderWidth);
+                OnPropertyChanged();
+            }
+        }
+
         // Events for stuff that needs to happen in the view (for now)
         public event EventHandler PlayVideo;
         public event EventHandler PauseVideo;
@@ -56,13 +68,17 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
                 _currentSegment = value;
                 OnPropertyChanged();
+                
+                if (value != null)
+                {
+                    CurrentSegment.CalculateHotspot(SliderWidth);
+                    // Signals view to load videos into players
+                    if (LoadSegment != null)
+                        LoadSegment.Invoke(this, new LoadSegmentEventArgs(_currentSegment));
+                }
 
                 NextSegmentCommand.RaiseCanExecuteChanged();
                 PreviousSegmentCommand.RaiseCanExecuteChanged();
-
-                // Signals view to load videos into players
-                if (LoadSegment != null)
-                    LoadSegment.Invoke(this, new LoadSegmentEventArgs(_currentSegment));
             }
         }
 
@@ -85,12 +101,16 @@ namespace TeslaCamMap.UwpClient.ViewModels
             int index = 0;
             foreach (var segment in model.Segments)
             {
-                var segmentViewModel = new EventSegmentViewModel(segment);
+                var segmentViewModel = new EventSegmentViewModel(segment, model.Timestamp);
                 segmentViewModel.SegmentIndex = index;
                 Segments.Add(segmentViewModel);
-
                 index++;
+
+                if (segment.ContainsEventTimestamp)
+                    CurrentSegment = segmentViewModel;
             }
+
+
         }
 
         private bool CanStepFrameCommandExecute(object arg)
@@ -105,7 +125,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public void OnNavigated()
         {
-            CurrentSegment = Segments.First();
+            var hotSegment = Segments.FirstOrDefault(s => s.Model.ContainsEventTimestamp);
+            if (hotSegment == null)
+                hotSegment = Segments.First();
+
+            CurrentSegment = hotSegment;
         }
 
         private bool CanPauseVideoCommandExecute(object arg)

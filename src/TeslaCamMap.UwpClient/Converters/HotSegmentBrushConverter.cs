@@ -3,28 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
+using Windows.UI;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace TeslaCamMap.UwpClient.Converters
 {
-    public class BoolAndNullVisibilityConverter : IValueConverter
+    public class HotSegmentBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if (value is bool && (bool)value)
-                return Visibility.Visible;
-            else if (value is bool && !(bool)value)
-                return Visibility.Collapsed;
+            {
+                return new SolidColorBrush(Colors.Red);
+            }
 
-            // todo: clean up
-            if (value is double? && !((double?)value).HasValue)
-                return Visibility.Collapsed;
-
-            if (value != null)
-                return Visibility.Visible;
-            else
-                return Visibility.Collapsed;
+            return new SolidColorBrush(Colors.Black);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -10,7 +10,7 @@ namespace TeslaCamMap.Lib.Model
     /// </summary>
     public class TeslaEvent
     {
-        public DateTime TimeStamp { get; set; }
+        public DateTime Timestamp { get; set; }
         public string City { get; set; }
         public double EstimatedLatitude { get; set; }
         public double EstimatedLongitude { get; set; }
@@ -27,7 +27,7 @@ namespace TeslaCamMap.Lib.Model
         public TeslaEvent(TeslaEventJson metadata)
         {
             Segments = new List<EventSegment>();
-            TimeStamp = metadata.timestamp;
+            Timestamp = metadata.timestamp;
             City = metadata.city;
             EstimatedLatitude = double.Parse(metadata.est_lat, CultureInfo.InvariantCulture);
             EstimatedLongitude = double.Parse(metadata.est_lon, CultureInfo.InvariantCulture);

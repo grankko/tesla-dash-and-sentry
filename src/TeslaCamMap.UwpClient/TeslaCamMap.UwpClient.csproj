@@ -132,6 +132,8 @@
     <Compile Include="Converters\EventReasonToGlyphConverter.cs" />
     <Compile Include="Converters\FullscreenToGlyphConverter.cs" />
     <Compile Include="Converters\BoolAndNullVisibilityConverter.cs" />
+    <Compile Include="Converters\HotSegmentBrushConverter.cs" />
+    <Compile Include="Converters\HotSpotMarginConverter.cs" />
     <Compile Include="Converters\SelectedColorBrushConverter.cs" />
     <Compile Include="Converters\SelectedItemZIndexConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
