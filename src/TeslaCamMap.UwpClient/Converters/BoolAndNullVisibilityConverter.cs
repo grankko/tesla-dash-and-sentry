@@ -8,10 +8,15 @@ using Windows.UI.Xaml.Data;
 
 namespace TeslaCamMap.UwpClient.Converters
 {
-    public class NullVisibilityConverter : IValueConverter
+    public class BoolAndNullVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (value is bool && (bool)value)
+                return Visibility.Visible;
+            else if (value is bool && !(bool)value)
+                return Visibility.Collapsed;
+
             if (value != null)
                 return Visibility.Visible;
             else
