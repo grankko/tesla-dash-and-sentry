@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using TeslaCamMap.Lib.Model;
+using System.Linq;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
@@ -184,6 +185,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
                 var folders = await result.GetFoldersAsync();
 
                 var events = await _fileSystemService.ParseFiles(folders);
+                events = events.OrderBy(e => e.Timestamp).ToList();
                 TeslaEvents = new ObservableCollection<TeslaEventMapElementViewModel>();
                 events.ForEach(e => TeslaEvents.Add(new TeslaEventMapElementViewModel(e)));
 
