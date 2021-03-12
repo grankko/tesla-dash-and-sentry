@@ -192,6 +192,11 @@ namespace TeslaCamMap.UwpClient
             SegmentsListView.ScrollIntoView(SegmentsListView.SelectedItem);
         }
 
+        private void SegmentsListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            SegmentsListView.ScrollIntoView(SegmentsListView.SelectedItem);
+        }
+
         private void Player_ToggleFullscreen(object sender, EventArgs e)
         {
             VideoPlayerControl player = (VideoPlayerControl)sender;
@@ -212,6 +217,11 @@ namespace TeslaCamMap.UwpClient
                 OneCameraLayoutGrid.Children.Add(player);
                 OneCameraLayoutGrid.Visibility = Visibility.Visible;
             }
+        }
+
+        private void VideoSlider_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ((EventDetailsViewModel)DataContext).SliderWidth = e.NewSize.Width;
         }
     }
 }

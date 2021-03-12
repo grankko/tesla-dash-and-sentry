@@ -83,12 +83,12 @@ namespace TeslaCamMap.UwpClient.Services
 
             // Group all video files into segments based on the timestamp in the file name
             var results = eventFolderFiles.Where(f => f.FileType.Equals(".mp4")).GroupBy(
-                f => ParseTimeStamp(f.Name),
+                f => ParseTimestamp(f.Name),
                 f => f,
                 (key, g) => new { SegmentTimestamp = key, ClipFiles = g.ToList() });
 
 
-            foreach (var fileGroup in results)
+            foreach (var fileGroup in results.OrderBy(r => r.SegmentTimestamp))
             {
                 var eventSegment = new EventSegment();
                 eventSegment.SegmentTimestamp = fileGroup.SegmentTimestamp;
@@ -99,6 +99,15 @@ namespace TeslaCamMap.UwpClient.Services
 
                 teslaEvent.Segments.Add(eventSegment);
             }
+
+            // Link event timestamps
+            for (int i = 0; i <teslaEvent.Segments.Count-1; i++)
+                teslaEvent.Segments[i].NextSegmentTimestamp = teslaEvent.Segments[i + 1].SegmentTimestamp;
+
+            // Sets flag if a segment period contains the event timestamp
+            var hotSegment = teslaEvent.Segments.Where(s => s.SegmentTimestamp < teslaEvent.Timestamp && (!s.NextSegmentTimestamp.HasValue || teslaEvent.Timestamp < s.NextSegmentTimestamp.Value)).FirstOrDefault();
+            if (hotSegment != null)
+                hotSegment.ContainsEventTimestamp = true;
 
             return teslaEvent;
         }
@@ -175,7 +184,7 @@ namespace TeslaCamMap.UwpClient.Services
             clip.ClipFile = clipFile;
             return clip;
         }
-        private static DateTime ParseTimeStamp(string fileName)
+        private static DateTime ParseTimestamp(string fileName)
         {
             // todo: use regex instead
             //filname format: 2020-07-02_12-10-39-back.mp4
