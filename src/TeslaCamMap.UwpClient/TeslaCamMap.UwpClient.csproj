@@ -119,6 +119,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ClientEventArgs\ProgressEventArgs.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Controls\MapControlExtension.cs" />
     <Compile Include="Controls\VideoPlayerControl.xaml.cs">
@@ -130,9 +131,10 @@
     <Compile Include="Converters\EventReasonLabelConverter.cs" />
     <Compile Include="Converters\EventReasonToGlyphConverter.cs" />
     <Compile Include="Converters\FullscreenToGlyphConverter.cs" />
-    <Compile Include="Converters\NullVisibilityConverter.cs" />
+    <Compile Include="Converters\BoolAndNullVisibilityConverter.cs" />
     <Compile Include="Converters\SelectedColorBrushConverter.cs" />
     <Compile Include="Converters\SelectedItemZIndexConverter.cs" />
+    <Compile Include="Converters\StringFormatConverter.cs" />
     <Compile Include="EventDetailsPage.xaml.cs">
       <DependentUpon>EventDetailsPage.xaml</DependentUpon>
     </Compile>

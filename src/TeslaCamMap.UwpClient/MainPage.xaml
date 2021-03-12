@@ -16,11 +16,12 @@
     <Page.Resources>
         <converters:BusyLabelConverter x:Key="BusyLabelConverter" />
         <converters:EventReasonLabelConverter x:Key="ReasonLabelConverter" />
-        <converters:NullVisibilityConverter x:Key="VisibilityConverter" />
+        <converters:BoolAndNullVisibilityConverter x:Key="VisibilityConverter" />
         <converters:EventReasonToGlyphConverter x:Key="EventReasonConverter" />
         <converters:BusyOpacityConverter x:Key="BusyOpacityConverter" />
         <converters:SelectedColorBrushConverter x:Key="SelectedColorConverter" />
         <converters:SelectedItemZIndexConverter x:Key="ZIndexConverter" />
+        <converters:StringFormatConverter x:Key="StringFormatConverter" />
     </Page.Resources>
     <Page.DataContext>
         <vm:MainViewModel />
@@ -62,7 +63,13 @@
                 </maps:MapItemsControl.ItemTemplate>
             </maps:MapItemsControl>
         </maps:MapControl>
-        <ProgressRing Grid.Row="0" Width="75" Height="75" IsActive="{Binding Path=IsBusy}" Visibility="Visible" />
+        <StackPanel Grid.Row="0" Orientation="Vertical" Width="150" Height="100">
+            <ProgressRing IsActive="{Binding Path=IsBusy}" Visibility="Visible" HorizontalAlignment="Center" Height="75" Width="75" />
+            <TextBlock Text="{Binding Path=ProcessedEvents, Converter={StaticResource StringFormatConverter}, ConverterParameter=\{0\} events processed.}" 
+                       Visibility="{Binding Path=IsBusy, Converter={StaticResource VisibilityConverter}}"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+
         <Grid Grid.Row="0" Grid.Column="1"  Margin="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

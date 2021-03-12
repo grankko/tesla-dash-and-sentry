@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Commands;
+using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
 using Windows.Storage.Pickers;
@@ -20,6 +22,17 @@ namespace TeslaCamMap.UwpClient.ViewModels
             set
             {
                 _mapZoom = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _processedEvents;
+        public int ProcessedEvents
+        {
+            get { return _processedEvents; }
+            set
+            {
+                _processedEvents = value;
                 OnPropertyChanged();
             }
         }
@@ -109,10 +122,16 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public MainViewModel()
         {
             _fileSystemService = new UwpFileSystemService();
+            _fileSystemService.ProgressUpdated += _fileSystemService_ProgressUpdated;
+
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
             SelectEventCommand = new RelayCommand(SelectEventCommandExecute, CanSelectEventCommandExecute);
+        }
 
+        private void _fileSystemService_ProgressUpdated(object sender, ClientEventArgs.ProgressEventArgs e)
+        {
+            ProcessedEvents = e.ItemsCompleted;
         }
 
         private bool CanSelectEventCommandExecute(object arg)
@@ -132,7 +151,9 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private void ViewVideoCommandExecute(object obj)
         {
-            ViewFrame.Navigate(typeof(EventDetailsPage), ((TeslaEventMapElementViewModel)obj).Model);
+            UwpTeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
+            _fileSystemService.PopulateEventMetadata(teslaEvent);
+            ViewFrame.Navigate(typeof(EventDetailsPage), teslaEvent);
         }
 
         private bool CanPickFolderCommandExecute(object arg)

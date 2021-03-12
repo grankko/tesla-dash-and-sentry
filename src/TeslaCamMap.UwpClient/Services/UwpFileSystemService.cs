@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Model;
+using TeslaCamMap.UwpClient.ClientEventArgs;
 using Windows.Storage;
-using Windows.Storage.Search;
 using Windows.Storage.Streams;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.Services
@@ -20,6 +17,8 @@ namespace TeslaCamMap.UwpClient.Services
 
     public class UwpFileSystemService
     {
+        public event EventHandler<ProgressEventArgs> ProgressUpdated;
+
         private const string MediaDurationPropertyName = "System.Media.Duration";
         private const string VideoFrameRatePropertyName = "System.Video.FrameRate";
         private const string SavedClipsFolderName = "SavedClips";
@@ -53,6 +52,7 @@ namespace TeslaCamMap.UwpClient.Services
                     {
                         UwpTeslaEvent teslaEvent = await ParseTeslaEvent(storeLocation, eventFolder, eventMetadataFile);
                         result.Add(teslaEvent);
+                        ProgressUpdated?.Invoke(this, new ProgressEventArgs(result.Count));
                     }
                 }
             }
@@ -95,10 +95,7 @@ namespace TeslaCamMap.UwpClient.Services
                 
                 eventSegment.Clips = new List<Clip>();
                 foreach (var clipFile in fileGroup.ClipFiles)
-                    eventSegment.Clips.Add(await ParseClipFile(clipFile));
-
-                eventSegment.MaxClipFrameDuration = eventSegment.Clips.Max(c => (int)c.FrameDuration);
-                eventSegment.MaxClipDuration = eventSegment.Clips.Max(c => c.Duration);
+                    eventSegment.Clips.Add(ParseClipFile(clipFile));
 
                 teslaEvent.Segments.Add(eventSegment);
             }
@@ -129,10 +126,34 @@ namespace TeslaCamMap.UwpClient.Services
         }
 
         /// <summary>
+        /// Reads video metadata properties from filesystem and populates properties in the event.
+        /// </summary>
+        /// <remarks>Costly operation. Don't do this for all events at the time of scanning through the top directory. Populate metadata only when user needs it.</remarks>
+        public async void PopulateEventMetadata(TeslaEvent teslaEvent)
+        {
+            foreach (var segment in teslaEvent.Segments)
+            {
+                foreach (var clip in segment.Clips.Cast<UwpClip>())
+                {
+                    StorageFile storageFile = (StorageFile)clip.ClipFile;
+
+                    IDictionary<string, object> retrieveProperties = await storageFile.Properties.RetrievePropertiesAsync(new string[] { VideoFrameRatePropertyName, MediaDurationPropertyName });
+                    clip.FrameRate = ((uint)retrieveProperties[VideoFrameRatePropertyName]);
+
+                    var duration = ((ulong)retrieveProperties[MediaDurationPropertyName]);
+                    clip.Duration = TimeSpan.FromTicks((long)duration);
+                }
+
+                segment.MaxClipFrameDuration = segment.Clips.Max(c => (int)c.FrameDuration);
+                segment.MaxClipDuration = segment.Clips.Max(c => c.Duration);
+            }
+        }
+
+        /// <summary>
         /// Gets a model of each clip (camera angle) for a segment of the event.
         /// </summary>
         /// <param name="clipFile"></param>
-        private async Task<UwpClip> ParseClipFile(StorageFile clipFile)
+        private UwpClip ParseClipFile(StorageFile clipFile)
         {
             var clip = new UwpClip();
             if (clipFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))
@@ -145,12 +166,6 @@ namespace TeslaCamMap.UwpClient.Services
                 clip.Camera = Camera.Back;
             else
                 clip.Camera = Camera.Unknown;
-
-            IDictionary<string, object> retrieveProperties = await clipFile.Properties.RetrievePropertiesAsync(new string[] { VideoFrameRatePropertyName, MediaDurationPropertyName });
-            clip.FrameRate = ((uint)retrieveProperties[VideoFrameRatePropertyName]);
-            
-            var duration = ((ulong)retrieveProperties[MediaDurationPropertyName]);
-            clip.Duration = TimeSpan.FromTicks((long)duration);
 
             clip.FilePath = clipFile.Path;
             clip.FileName = clipFile.Name;
