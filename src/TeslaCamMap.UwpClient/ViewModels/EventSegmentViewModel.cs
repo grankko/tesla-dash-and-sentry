@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Model;
 
 namespace TeslaCamMap.UwpClient.ViewModels
@@ -31,8 +29,11 @@ namespace TeslaCamMap.UwpClient.ViewModels
         {
             if (Model.ContainsEventTimestamp)
             {
+                if (!Model.MaxClipDuration.HasValue)
+                    throw new InvalidOperationException("Clip metadata for the segment has not been loaded.");
+
                 var hotSpotTimeSpanFromStart = _eventHotSpot - Model.SegmentTimestamp;
-                var percentage = hotSpotTimeSpanFromStart.TotalMilliseconds / Model.MaxClipDuration.TotalMilliseconds;
+                var percentage = hotSpotTimeSpanFromStart.TotalMilliseconds / Model.MaxClipDuration.Value.TotalMilliseconds;
                 
                 if (percentage > 1)
                     percentage = 1;

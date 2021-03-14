@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Windows.Storage;
 
-namespace TeslaCamMap.Lib.Model
+namespace TeslaCamMap.UwpClient.Model
 {
     /// <summary>
     /// Represents one unique event.
@@ -17,7 +18,8 @@ namespace TeslaCamMap.Lib.Model
         public EventReason Reason { get; set; }
         public EventStoreLocation StoreLocation { get; set; }
         public string FolderPath { get; set; }
-        
+        public IStorageFile ThumbnailFile { get; set; }
+
         /// <summary>
         /// Each event consists of multiple segments with video from all active cameras.
         /// </summary>

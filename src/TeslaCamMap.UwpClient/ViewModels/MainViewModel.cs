@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using TeslaCamMap.Lib.Model;
-using System.Linq;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
-using Windows.Storage.Pickers;
 
 namespace TeslaCamMap.UwpClient.ViewModels
 {
@@ -14,7 +11,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
     {
         private const int DefaultZoomLevel = 15;
 
-        private UwpFileSystemService _fileSystemService;
+        private FileSystemService _fileSystemService;
 
         private int _mapZoom;
         public int MapZoom
@@ -122,17 +119,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public MainViewModel()
         {
-            _fileSystemService = new UwpFileSystemService();
+            _fileSystemService = new FileSystemService();
             _fileSystemService.ProgressUpdated += _fileSystemService_ProgressUpdated;
 
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
             SelectEventCommand = new RelayCommand(SelectEventCommandExecute, CanSelectEventCommandExecute);
-        }
-
-        private void _fileSystemService_ProgressUpdated(object sender, ClientEventArgs.ProgressEventArgs e)
-        {
-            ProcessedEvents = e.ItemsCompleted;
         }
 
         private bool CanSelectEventCommandExecute(object arg)
@@ -152,7 +144,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private async void ViewVideoCommandExecute(object obj)
         {
-            UwpTeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
+            TeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
             ViewFrame.Navigate(typeof(EventDetailsPage), await _fileSystemService.PopulateEventMetadata(teslaEvent));
         }
 
@@ -172,27 +164,24 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private async void PickFolderCommandExecute(object obj)
         {
-            FolderPicker picker = new FolderPicker();
-            picker.FileTypeFilter.Add(".mp4");
-            picker.FileTypeFilter.Add(".json");
-            picker.FileTypeFilter.Add(".png");
+            ProcessedEvents = 0;
             
-            var result = await picker.PickSingleFolderAsync();
-
-            if (result != null)
+            var result = await _fileSystemService.OpenAndParseFolder();
+            if (result?.Result != null)
             {
-                IsBusy = true;
-                var folders = await result.GetFoldersAsync();
-
-                var events = await _fileSystemService.ParseFiles(folders);
-                events = events.OrderBy(e => e.Timestamp).ToList();
                 TeslaEvents = new ObservableCollection<TeslaEventMapElementViewModel>();
-                events.ForEach(e => TeslaEvents.Add(new TeslaEventMapElementViewModel(e)));
+                result.Result.ForEach(e => TeslaEvents.Add(new TeslaEventMapElementViewModel(e)));
 
-                SelectedFolderLabelText = $"{result.Path} - {TeslaEvents.Count} events found.";
+                SelectedFolderLabelText = $"{result.ParsedPath} - {TeslaEvents.Count} events found.";
             }
 
             IsBusy = false;
+        }
+
+        private void _fileSystemService_ProgressUpdated(object sender, ClientEventArgs.ProgressEventArgs e)
+        {
+            IsBusy = true;
+            ProcessedEvents = e.ItemsCompleted;
         }
     }
 }

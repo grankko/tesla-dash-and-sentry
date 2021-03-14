@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Model;
@@ -86,7 +85,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
-        public EventDetailsViewModel(UwpTeslaEvent model)
+        public EventDetailsViewModel(TeslaEvent model)
         {
 
             NextSegmentCommand = new RelayCommand(NextSegmentCommandExecute, CanNextSegmentCommandExecute);

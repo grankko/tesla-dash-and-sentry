@@ -1,6 +1,7 @@
 ﻿using System;
+using Windows.Storage;
 
-namespace TeslaCamMap.Lib.Model
+namespace TeslaCamMap.UwpClient.Model
 {
     /// <summary>
     /// Represents one video clip of a segment of the event.
@@ -13,5 +14,6 @@ namespace TeslaCamMap.Lib.Model
         public uint FrameDuration { get => FrameRate / 1000; }
         public TimeSpan Duration { get; set; }
         public string FileName { get; set; }
+        public IStorageFile ClipFile { get; set; }
     }
 }

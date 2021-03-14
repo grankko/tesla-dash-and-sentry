@@ -1,7 +1,6 @@
 ﻿using FFmpegInterop;
 using System;
 using System.Threading.Tasks;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Controls;
 using TeslaCamMap.UwpClient.Model;
@@ -50,7 +49,7 @@ namespace TeslaCamMap.UwpClient
         {
             base.OnNavigatedTo(e);
 
-            var vm = new EventDetailsViewModel((UwpTeslaEvent)e.Parameter);
+            var vm = new EventDetailsViewModel((TeslaEvent)e.Parameter);
             this.DataContext = vm;
 
             vm.PlayVideo += Vm_PlayVideo;
@@ -76,13 +75,13 @@ namespace TeslaCamMap.UwpClient
             _currentEstimatedFrameDuration = (int)e.Segment.Model.MaxClipFrameDuration;
             VideoSlider.Value = 0;
             foreach (var clip in e.Segment.Model.Clips)
-                LoadClip((UwpClip)clip);
+                LoadClip(clip);
 
             VideoSlider.Minimum = 0;
-            VideoSlider.Maximum = e.Segment.Model.MaxClipDuration.TotalSeconds;
+            VideoSlider.Maximum = e.Segment.Model.MaxClipDuration.Value.TotalSeconds;
         }
 
-        private async void LoadClip(UwpClip clip)
+        private async void LoadClip(Clip clip)
         {
             switch (clip.Camera)
             {
@@ -105,7 +104,7 @@ namespace TeslaCamMap.UwpClient
             _mediaTimelineController.Position = TimeSpan.Zero;
         }
 
-        private async Task<FFmpegInteropMSS> CreateMediaSourceAndPlayer(MediaPlayerElement playerElement, FFmpegInteropMSS ffmpegMss, UwpClip clip)
+        private async Task<FFmpegInteropMSS> CreateMediaSourceAndPlayer(MediaPlayerElement playerElement, FFmpegInteropMSS ffmpegMss, Clip clip)
         {
             if (ffmpegMss != null)
                 ffmpegMss.Dispose();

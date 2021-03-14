@@ -4,19 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{6E70E1E9-AF50-4891-A24A-994542D27C70}</ProjectGuid>
+    <ProjectGuid>{2FBDB249-3425-4A72-94A8-65E0BBA920EF}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TeslaCamMap.UwpClient</RootNamespace>
-    <AssemblyName>TeslaCamMap.UwpClient</AssemblyName>
+    <RootNamespace>TeslaCamMap.UwpClient.Tests</RootNamespace>
+    <AssemblyName>TeslaCamMap.UwpClient.Tests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
+    <UnitTestPlatformVersion Condition="'$(UnitTestPlatformVersion)' == ''">$(VisualStudioVersion)</UnitTestPlatformVersion>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -116,51 +116,20 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ClientEventArgs\ProgressEventArgs.cs" />
-    <Compile Include="Commands\RelayCommand.cs" />
-    <Compile Include="Controls\MapControlExtension.cs" />
-    <Compile Include="Controls\VideoPlayerControl.xaml.cs">
-      <DependentUpon>VideoPlayerControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converters\BusyLabelConverter.cs" />
-    <Compile Include="Converters\BusyOpacityConverter.cs" />
-    <Compile Include="Converters\CameraToLabelConverter.cs" />
-    <Compile Include="Converters\EventReasonLabelConverter.cs" />
-    <Compile Include="Converters\EventReasonToGlyphConverter.cs" />
-    <Compile Include="Converters\FullscreenToGlyphConverter.cs" />
-    <Compile Include="Converters\BoolAndNullVisibilityConverter.cs" />
-    <Compile Include="Converters\HotSegmentBrushConverter.cs" />
-    <Compile Include="Converters\HotSpotMarginConverter.cs" />
-    <Compile Include="Converters\SelectedColorBrushConverter.cs" />
-    <Compile Include="Converters\SelectedItemZIndexConverter.cs" />
-    <Compile Include="Converters\StringFormatConverter.cs" />
-    <Compile Include="EventDetailsPage.xaml.cs">
-      <DependentUpon>EventDetailsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Model\Camera.cs" />
-    <Compile Include="Model\Clip.cs" />
-    <Compile Include="Model\EventReason.cs" />
-    <Compile Include="Model\EventSegment.cs" />
-    <Compile Include="Model\EventStoreLocation.cs" />
-    <Compile Include="Model\TeslaEvent.cs" />
-    <Compile Include="Model\TeslaEventJson.cs" />
+    <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IntegrationTests\FileSystemServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\FileSerivceParseResult.cs" />
-    <Compile Include="Services\FileSystemService.cs" />
-    <Compile Include="ViewModels\EventSegmentViewModel.cs" />
-    <Compile Include="ViewModels\EventDetailsViewModel.cs" />
-    <Compile Include="ClientEventArgs\LoadSegmentEventArgs.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="ClientEventArgs\StepFrameEventArgs.cs" />
-    <Compile Include="ViewModels\TeslaEventMapElementViewModel.cs" />
-    <Compile Include="ViewModels\VideoPlayerViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="UnitTestApp.xaml.cs">
+      <DependentUpon>UnitTestApp.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="UnitTestApp.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -168,8 +137,33 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bing_key" />
-    <Content Include="Properties\Default.rd.xml" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-00-back.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-00-front.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-00-left_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-00-right_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-20-back.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-20-front.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-20-left_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\2020-02-01_13-10-20-right_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\thumb.png" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-00-back.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-00-front.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-00-left_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-00-right_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-20-back.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-20-front.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-20-left_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\2020-02-02_13-10-20-right_repeater.mp4" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\thumb.png" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-00-back.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-00-front.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-00-left_repeater.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-00-right_repeater.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-20-back.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-20-front.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-20-left_repeater.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\2020-02-03_13-10-20-right_repeater.mp4" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\thumb.png" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -177,47 +171,34 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="test_image_file.png" />
+    <Content Include="test_text_file" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="Controls\VideoPlayerControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="EventDetailsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="FFmpegInteropX">
-      <Version>0.9.1</Version>
-    </PackageReference>
-    <PackageReference Include="FFmpegInteropX.FFmpegUWP">
-      <Version>4.3.100</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
-      <Version>2.0.1</Version>
+    <PackageReference Include="MSTest.TestAdapter">
+      <Version>2.2.1</Version>
     </PackageReference>
-    <PackageReference Include="System.Text.Json">
-      <Version>5.0.1</Version>
+    <PackageReference Include="MSTest.TestFramework">
+      <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk">
+      <Version>16.9.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TeslaCamMap.UwpClient\TeslaCamMap.UwpClient.csproj">
+      <Project>{6e70e1e9-af50-4891-a24a-994542d27c70}</Project>
+      <Name>TeslaCamMap.UwpClient</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\SavedClips\2020-02-01_13-10-30\event.json" />
+    <Content Include="Assets\SavedClips\2020-02-02_13-10-30\event.json" />
+    <Content Include="Assets\SentryClips\2020-02-03_13-10-30\event.json" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

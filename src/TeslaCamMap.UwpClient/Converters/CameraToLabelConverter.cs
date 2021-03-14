@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TeslaCamMap.Lib.Model;
+using TeslaCamMap.UwpClient.Model;
 using Windows.UI.Xaml.Data;
 
 namespace TeslaCamMap.UwpClient.Converters
