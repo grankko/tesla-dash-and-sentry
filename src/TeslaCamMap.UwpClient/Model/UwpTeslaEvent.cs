@@ -16,6 +16,5 @@ namespace TeslaCamMap.UwpClient.Model
         }
 
         public IStorageFile ThumbnailFile { get; set; }
-        public MapIcon EventMapIcon { get; set; }
     }
 }
