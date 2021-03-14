@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using TeslaCamMap.Lib.Model;
-using System.Linq;
 using TeslaCamMap.UwpClient.Commands;
 using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.Devices.Geolocation;
-using Windows.Storage.Pickers;
 
 namespace TeslaCamMap.UwpClient.ViewModels
 {
@@ -152,7 +149,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         private async void ViewVideoCommandExecute(object obj)
         {
-            UwpTeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
+            TeslaEvent teslaEvent = ((TeslaEventMapElementViewModel)obj).Model;
             ViewFrame.Navigate(typeof(EventDetailsPage), await _fileSystemService.PopulateEventMetadata(teslaEvent));
         }
 

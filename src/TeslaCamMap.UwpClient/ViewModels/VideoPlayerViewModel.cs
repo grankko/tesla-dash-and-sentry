@@ -1,4 +1,4 @@
-﻿using TeslaCamMap.Lib.Model;
+﻿using TeslaCamMap.UwpClient.Model;
 
 namespace TeslaCamMap.UwpClient.ViewModels
 {

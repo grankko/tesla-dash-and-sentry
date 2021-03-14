@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Model;
 
 namespace TeslaCamMap.UwpClient.ViewModels

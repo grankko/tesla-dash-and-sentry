@@ -1,16 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.VisualStudio.TestTools.UnitTesting.AppContainer;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using TeslaCamMap.Lib.Model;
+using TeslaCamMap.UwpClient.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
 using Windows.Storage.Search;
-using Windows.UI.Core;
 
 namespace TeslaCamMap.UwpClient.Tests.IntegrationTests
 {

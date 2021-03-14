@@ -189,10 +189,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TeslaCamMap.Lib\TeslaCamMap.Lib.csproj">
-      <Project>{92804e37-44d7-44bf-b8f5-93194b467c5a}</Project>
-      <Name>TeslaCamMap.Lib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TeslaCamMap.UwpClient\TeslaCamMap.UwpClient.csproj">
       <Project>{6e70e1e9-af50-4891-a24a-994542d27c70}</Project>
       <Name>TeslaCamMap.UwpClient</Name>

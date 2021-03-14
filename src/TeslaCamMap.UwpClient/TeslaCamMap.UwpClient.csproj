@@ -143,8 +143,13 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\UwpClip.cs" />
-    <Compile Include="Model\UwpTeslaEvent.cs" />
+    <Compile Include="Model\Camera.cs" />
+    <Compile Include="Model\Clip.cs" />
+    <Compile Include="Model\EventReason.cs" />
+    <Compile Include="Model\EventSegment.cs" />
+    <Compile Include="Model\EventStoreLocation.cs" />
+    <Compile Include="Model\TeslaEvent.cs" />
+    <Compile Include="Model\TeslaEventJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\UwpFileSystemService.cs" />
     <Compile Include="ViewModels\EventSegmentViewModel.cs" />
@@ -212,12 +217,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\TeslaCamMap.Lib\TeslaCamMap.Lib.csproj">
-      <Project>{92804e37-44d7-44bf-b8f5-93194b467c5a}</Project>
-      <Name>TeslaCamMap.Lib</Name>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

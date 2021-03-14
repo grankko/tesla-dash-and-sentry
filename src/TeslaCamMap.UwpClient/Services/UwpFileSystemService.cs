@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.ClientEventArgs;
 using TeslaCamMap.UwpClient.Model;
 using Windows.Storage;
@@ -17,7 +16,7 @@ namespace TeslaCamMap.UwpClient.Services
 {
     public class ParseResult
     {
-        public List<UwpTeslaEvent> Result { get; set; }
+        public List<TeslaEvent> Result { get; set; }
         public string ParsedPath { get; set; }
 
     }
@@ -58,9 +57,9 @@ namespace TeslaCamMap.UwpClient.Services
             return result;
         }
 
-        public async Task<List<UwpTeslaEvent>> ParseFiles(IReadOnlyList<StorageFile> files)
+        public async Task<List<TeslaEvent>> ParseFiles(IReadOnlyList<StorageFile> files)
         {
-            var result = new List<UwpTeslaEvent>();
+            var result = new List<TeslaEvent>();
 
             var eventMetadataFiles = files.Where(f => f.FileType.Equals(EventMetadataFileExtension));
             var videoFiles = files.Where(f => f.FileType.Equals(EventVideoFileExtension));
@@ -79,7 +78,7 @@ namespace TeslaCamMap.UwpClient.Services
                 var eventText = await FileIO.ReadTextAsync(metadataFile);
                 var metadata = JsonSerializer.Deserialize<TeslaEventJson>(eventText);
 
-                var teslaEvent = new UwpTeslaEvent(metadata);
+                var teslaEvent = new TeslaEvent(metadata);
                 teslaEvent.StoreLocation = storeLocation;
                 teslaEvent.FolderPath = metadataFile.Path;
 
@@ -125,9 +124,9 @@ namespace TeslaCamMap.UwpClient.Services
         /// Gets a model of each clip (camera angle) for a segment of the event.
         /// </summary>
         /// <param name="clipFile"></param>
-        private UwpClip ParseClipFile(StorageFile clipFile)
+        private Clip ParseClipFile(StorageFile clipFile)
         {
-            var clip = new UwpClip();
+            var clip = new Clip();
             if (clipFile.Name.Contains("left", StringComparison.InvariantCultureIgnoreCase))
                 clip.Camera = Camera.LeftRepeater;
             else if (clipFile.Name.Contains("front", StringComparison.InvariantCultureIgnoreCase))
@@ -166,11 +165,11 @@ namespace TeslaCamMap.UwpClient.Services
         /// Reads video metadata properties from filesystem and populates properties in the event.
         /// </summary>
         /// <remarks>Costly operation. Don't do this for all events at the time of scanning through the top directory. Populate metadata only when user needs it.</remarks>
-        public async Task<UwpTeslaEvent> PopulateEventMetadata(UwpTeslaEvent teslaEvent)
+        public async Task<TeslaEvent> PopulateEventMetadata(TeslaEvent teslaEvent)
         {
             foreach (var segment in teslaEvent.Segments)
             {
-                foreach (var clip in segment.Clips.Cast<UwpClip>())
+                foreach (var clip in segment.Clips.Cast<Clip>())
                 {
                     StorageFile storageFile = (StorageFile)clip.ClipFile;
 

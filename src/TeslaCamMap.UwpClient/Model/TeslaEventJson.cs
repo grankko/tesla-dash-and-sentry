@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TeslaCamMap.Lib.Model
+namespace TeslaCamMap.UwpClient.Model
 {
     /// <summary>
     /// Raw representation of the event.json data.

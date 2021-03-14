@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TeslaCamMap.Lib.Model
+namespace TeslaCamMap.UwpClient.Model
 {
     public class EventSegment
     {
