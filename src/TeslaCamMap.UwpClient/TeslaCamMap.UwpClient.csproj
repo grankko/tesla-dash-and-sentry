@@ -151,7 +151,8 @@
     <Compile Include="Model\TeslaEvent.cs" />
     <Compile Include="Model\TeslaEventJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\UwpFileSystemService.cs" />
+    <Compile Include="Services\FileSerivceParseResult.cs" />
+    <Compile Include="Services\FileSystemService.cs" />
     <Compile Include="ViewModels\EventSegmentViewModel.cs" />
     <Compile Include="ViewModels\EventDetailsViewModel.cs" />
     <Compile Include="ClientEventArgs\LoadSegmentEventArgs.cs" />

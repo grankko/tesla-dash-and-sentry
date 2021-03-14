@@ -14,14 +14,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace TeslaCamMap.UwpClient.Services
 {
-    public class ParseResult
-    {
-        public List<TeslaEvent> Result { get; set; }
-        public string ParsedPath { get; set; }
-
-    }
-
-    public class UwpFileSystemService
+    public class FileSystemService
     {
         public event EventHandler<ProgressEventArgs> ProgressUpdated;
 
@@ -37,9 +30,9 @@ namespace TeslaCamMap.UwpClient.Services
 
         private Regex _eventFolderNameRegex = new Regex(@"(?<EventFolderName>[\d]{4}-[\d]{2}-[\d]{2}_[\d]{2}-[\d]{2}-[\d]{2})");
 
-        public async Task<ParseResult> OpenAndParseFolder()
+        public async Task<FileSerivceParseResult> OpenAndParseFolder()
         {
-            var result = new ParseResult();
+            var result = new FileSerivceParseResult();
 
             FolderPicker picker = new FolderPicker();
             picker.FileTypeFilter.Add(EventVideoFileExtension);
@@ -49,6 +42,8 @@ namespace TeslaCamMap.UwpClient.Services
             var folderResult = await picker.PickSingleFolderAsync();
             if (folderResult != null)
             {
+                ProgressUpdated?.Invoke(this, new ProgressEventArgs(0)); // Folder selected, indicate that work is starting
+
                 var files = await folderResult.GetFilesAsync(CommonFileQuery.OrderByName);
                 result.Result = await ParseFiles(files);
                 result.ParsedPath = folderResult.Path;

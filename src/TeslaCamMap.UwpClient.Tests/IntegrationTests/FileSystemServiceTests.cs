@@ -10,14 +10,14 @@ using Windows.Storage.Search;
 namespace TeslaCamMap.UwpClient.Tests.IntegrationTests
 {
     [TestClass]
-    public class UwpFileSystemServiceTests
+    public class FileSystemServiceTests
     {
         [TestMethod]
         public void ParseEventFilesIntegrationTest()
         {
             Task.Run(async () =>
             {
-                var sut = new UwpFileSystemService();
+                var sut = new FileSystemService();
                 var files = await Package.Current.InstalledLocation.GetFilesAsync(CommonFileQuery.OrderByName);
                 var result = await sut.ParseFiles(files);
 
@@ -66,7 +66,7 @@ namespace TeslaCamMap.UwpClient.Tests.IntegrationTests
         {
             Task.Run(async () =>
             {
-                var sut = new UwpFileSystemService();
+                var sut = new FileSystemService();
                 var result = await sut.GetStringFromApplicationFile("test_text_file");
 
                 Assert.AreEqual("0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3", result);

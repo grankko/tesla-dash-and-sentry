@@ -7,7 +7,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 {
     public class TeslaEventMapElementViewModel : ViewModelBase
     {
-        private UwpFileSystemService _fileSystemService;
+        private FileSystemService _fileSystemService;
         public TeslaEvent Model { get; set; }
         public Geopoint Location { get; set; }
 
@@ -43,7 +43,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         public TeslaEventMapElementViewModel(TeslaEvent model)
         {
             Model = model;
-            _fileSystemService = new UwpFileSystemService();
+            _fileSystemService = new FileSystemService();
             Location = new Geopoint(new BasicGeoposition() { Latitude = model.EstimatedLatitude, Longitude = model.EstimatedLongitude });
             this.PropertyChanged += TeslaEventMapElementViewModel_PropertyChanged;
         }

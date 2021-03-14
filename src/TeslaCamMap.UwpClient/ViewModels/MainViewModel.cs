@@ -11,7 +11,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
     {
         private const int DefaultZoomLevel = 15;
 
-        private UwpFileSystemService _fileSystemService;
+        private FileSystemService _fileSystemService;
 
         private int _mapZoom;
         public int MapZoom
@@ -119,17 +119,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public MainViewModel()
         {
-            _fileSystemService = new UwpFileSystemService();
+            _fileSystemService = new FileSystemService();
             _fileSystemService.ProgressUpdated += _fileSystemService_ProgressUpdated;
 
             PickFolderCommand = new RelayCommand(PickFolderCommandExecute, CanPickFolderCommandExecute);
             ViewVideoCommand = new RelayCommand(ViewVideoCommandExecute, CanViewVideoCommandExecute);
             SelectEventCommand = new RelayCommand(SelectEventCommandExecute, CanSelectEventCommandExecute);
-        }
-
-        private void _fileSystemService_ProgressUpdated(object sender, ClientEventArgs.ProgressEventArgs e)
-        {
-            ProcessedEvents = e.ItemsCompleted;
         }
 
         private bool CanSelectEventCommandExecute(object arg)
@@ -170,8 +165,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         private async void PickFolderCommandExecute(object obj)
         {
             ProcessedEvents = 0;
-            IsBusy = true;
-
+            
             var result = await _fileSystemService.OpenAndParseFolder();
             if (result?.Result != null)
             {
@@ -182,6 +176,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
 
             IsBusy = false;
+        }
+
+        private void _fileSystemService_ProgressUpdated(object sender, ClientEventArgs.ProgressEventArgs e)
+        {
+            IsBusy = true;
+            ProcessedEvents = e.ItemsCompleted;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TeslaCamMap.UwpClient.ClientEventArgs
     public class ProgressEventArgs : EventArgs
     {
         public int ItemsCompleted { get; private set; }
-
+        
         public ProgressEventArgs(int itemsCompleted)
         {
             ItemsCompleted = itemsCompleted;
