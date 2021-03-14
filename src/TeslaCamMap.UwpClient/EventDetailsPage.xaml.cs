@@ -79,7 +79,7 @@ namespace TeslaCamMap.UwpClient
                 LoadClip((UwpClip)clip);
 
             VideoSlider.Minimum = 0;
-            VideoSlider.Maximum = e.Segment.Model.MaxClipDuration.TotalSeconds;
+            VideoSlider.Maximum = e.Segment.Model.MaxClipDuration.Value.TotalSeconds;
         }
 
         private async void LoadClip(UwpClip clip)

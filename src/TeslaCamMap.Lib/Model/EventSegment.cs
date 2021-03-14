@@ -24,9 +24,8 @@ namespace TeslaCamMap.Lib.Model
         /// <summary>
         /// Clips can have different frame rates within the same segment. This property holds the value of the calculated maximum frame duration in milliseconds for the clips.
         /// </summary>
-        public int MaxClipFrameDuration { get; set; }
-
-        public TimeSpan MaxClipDuration { get; set; }
+        public int? MaxClipFrameDuration { get; set; }
+        public TimeSpan? MaxClipDuration { get; set; }
         public bool ContainsEventTimestamp { get; set; }
     }
 }

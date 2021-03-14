@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting.AppContainer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,9 @@ using System.Threading.Tasks;
 using TeslaCamMap.Lib.Model;
 using TeslaCamMap.UwpClient.Services;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.Storage.Search;
+using Windows.UI.Core;
 
 namespace TeslaCamMap.UwpClient.Tests.IntegrationTests
 {
@@ -54,6 +57,24 @@ namespace TeslaCamMap.UwpClient.Tests.IntegrationTests
                 Assert.IsFalse(thirdEvent.Segments.Last().ContainsEventTimestamp);
                 Assert.AreEqual("Sollentuna", thirdEvent.City);
                 Assert.AreEqual(EventReason.SentryAwareObjectDetection, thirdEvent.Reason);
+
+                // Test to load metadata
+                Assert.IsFalse(firstEvent.Segments.First().MaxClipDuration.HasValue);
+                firstEvent = await sut.PopulateEventMetadata(firstEvent);
+                Assert.IsTrue(firstEvent.Segments.First().MaxClipDuration.HasValue);
+
+            }).GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void ReadTextFileIntegrationTest()
+        {
+            Task.Run(async () =>
+            {
+                var sut = new UwpFileSystemService();
+                var result = await sut.GetStringFromApplicationFile("test_text_file");
+
+                Assert.AreEqual("0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3", result);
 
             }).GetAwaiter().GetResult();
         }
