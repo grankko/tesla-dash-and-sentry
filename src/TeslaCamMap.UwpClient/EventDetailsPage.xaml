@@ -21,12 +21,11 @@
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="200" />
+            <RowDefinition Height="200" x:Name="ControlsRow" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Background="Black" x:Name="OneCameraLayoutGrid" Visibility="Collapsed">
         </Grid>
-
         <Grid Grid.Row="0" Background="Black" x:Name="MultiCameraLayoutGrid">
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -42,8 +41,10 @@
             <controls:VideoPlayerControl Grid.Row="0" Grid.Column="2" x:Name="RightPlayer" DataContext="{Binding Path=RightPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
             <controls:VideoPlayerControl Grid.Row="1" Grid.Column="1" x:Name="BackPlayer" DataContext="{Binding Path=BackPlayerViewModel}" ToggleFullscreen="Player_ToggleFullscreen" />
         </Grid>
-
-        <Grid Grid.Row="1">
+        <Button x:Name="MinimizeControlsButton" Click="MinimizeControlsButton_Click" Grid.Row="1" Style="{ThemeResource VideoPlayerButtonStyle}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,-25,5,0">
+            <FontIcon x:Name="MinimizeControlsIcon" FontFamily="Segoe MDL2 Assets" Glyph="&#xE972;" Foreground="AliceBlue"/>
+        </Button>
+        <Grid Grid.Row="1" x:Name="ControlsGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />

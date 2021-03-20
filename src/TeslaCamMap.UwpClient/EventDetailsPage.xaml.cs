@@ -222,5 +222,20 @@ namespace TeslaCamMap.UwpClient
         {
             ((EventDetailsViewModel)DataContext).SliderWidth = e.NewSize.Width;
         }
+
+        private void MinimizeControlsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlsGrid.Visibility == Visibility.Collapsed)
+            {
+                ControlsGrid.Visibility = Visibility.Visible;
+                ControlsRow.Height = new GridLength(200);
+                MinimizeControlsIcon.Glyph = "\xE972";
+            } else
+            {
+                ControlsGrid.Visibility = Visibility.Collapsed;
+                ControlsRow.Height = new GridLength(0);
+                MinimizeControlsIcon.Glyph = "\xE971";
+            }
+        }
     }
 }
