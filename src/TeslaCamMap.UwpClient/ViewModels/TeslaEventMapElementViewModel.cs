@@ -36,7 +36,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         private async void TeslaEventMapElementViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Load thumbnail image for the selected event.
-            if (e.PropertyName == nameof(IsSelected) && IsSelected)
+            if (e.PropertyName == nameof(IsSelected) && IsSelected && Model.ThumbnailFile != null)
                 ThumbnailImage = await _fileSystemService.LoadImageFromStorageFile(Model.ThumbnailFile);
         }
 
