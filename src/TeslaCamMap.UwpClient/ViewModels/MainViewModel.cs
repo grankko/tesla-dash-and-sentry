@@ -32,7 +32,25 @@ namespace TeslaCamMap.UwpClient.ViewModels
             {
                 _processedEvents = value;
                 OnPropertyChanged();
+                OnPropertyChanged("ProcessedEventsOfTotal");
             }
+        }
+
+        private int _totalEvents;
+        public int TotalEvents
+        {
+            get { return _totalEvents; }
+            set
+            {
+                _totalEvents = value;
+                OnPropertyChanged();
+                OnPropertyChanged("ProcessedEventsOfTotal");
+            }
+        }
+
+        public string ProcessedEventsOfTotal
+        {
+            get { return String.Format("{0}/{1}", _processedEvents, _totalEvents); }
         }
 
         private Geopoint _mapCenter;
@@ -182,6 +200,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
         {
             IsBusy = true;
             ProcessedEvents = e.ItemsCompleted;
+            TotalEvents = e.ItemsTotal;
         }
     }
 }

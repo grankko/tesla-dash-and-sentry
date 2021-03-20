@@ -42,7 +42,7 @@ namespace TeslaCamMap.UwpClient.Services
             var folderResult = await picker.PickSingleFolderAsync();
             if (folderResult != null)
             {
-                ProgressUpdated?.Invoke(this, new ProgressEventArgs(0)); // Folder selected, indicate that work is starting
+                ProgressUpdated?.Invoke(this, new ProgressEventArgs(0, 0)); // Folder selected, indicate that work is starting
 
                 var files = await folderResult.GetFilesAsync(CommonFileQuery.OrderByName);
                 result.Result = await ParseFiles(files);
@@ -77,9 +77,12 @@ namespace TeslaCamMap.UwpClient.Services
                 teslaEvent.StoreLocation = storeLocation;
                 teslaEvent.FolderPath = metadataFile.Path;
 
-                var thumbnailFile = files.First(f => f.FileType.Equals(EventThumbnailFileExtension) && f.Path.Contains(folderName));
-                teslaEvent.ThumbnailFile = thumbnailFile;
-                teslaEvent.ThumbnailPath = thumbnailFile.Path;
+                var thumbnailFile = files.FirstOrDefault(f => f.FileType.Equals(EventThumbnailFileExtension) && f.Path.Contains(folderName));
+                if (thumbnailFile != null)
+                {
+                    teslaEvent.ThumbnailFile = thumbnailFile;
+                    teslaEvent.ThumbnailPath = thumbnailFile.Path;
+                }
 
                 var results = files.Where(f => f.Path.Contains(folderName) && f.FileType.Equals(EventVideoFileExtension)).GroupBy(
                     f => ParseTimestampFromFilename(f.Name),
@@ -109,7 +112,7 @@ namespace TeslaCamMap.UwpClient.Services
                     hotSegment.ContainsEventTimestamp = true;
 
                 result.Add(teslaEvent);
-                ProgressUpdated?.Invoke(this, new ProgressEventArgs(result.Count));
+                ProgressUpdated?.Invoke(this, new ProgressEventArgs(result.Count, eventMetadataFiles.Count()));
             }
 
             return result.OrderBy(r => r.Timestamp).ToList();

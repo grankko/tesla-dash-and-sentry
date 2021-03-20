@@ -63,9 +63,9 @@
                 </maps:MapItemsControl.ItemTemplate>
             </maps:MapItemsControl>
         </maps:MapControl>
-        <StackPanel Grid.Row="0" Orientation="Vertical" Width="150" Height="100">
+        <StackPanel Grid.Row="0" Orientation="Vertical" Width="200" Height="100">
             <ProgressRing IsActive="{Binding Path=IsBusy}" Visibility="Visible" HorizontalAlignment="Center" Height="75" Width="75" />
-            <TextBlock Text="{Binding Path=ProcessedEvents, Converter={StaticResource StringFormatConverter}, ConverterParameter=\{0\} events processed.}" 
+            <TextBlock Text="{Binding Path=ProcessedEventsOfTotal, Converter={StaticResource StringFormatConverter}, ConverterParameter=\{0\} events processed.}" 
                        Visibility="{Binding Path=IsBusy, Converter={StaticResource VisibilityConverter}}"
                        HorizontalAlignment="Center" />
         </StackPanel>
