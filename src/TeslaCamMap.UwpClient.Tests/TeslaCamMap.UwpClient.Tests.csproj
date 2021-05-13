@@ -185,7 +185,7 @@
       <Version>2.2.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk">
-      <Version>16.9.1</Version>
+      <Version>16.9.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
