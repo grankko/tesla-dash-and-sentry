@@ -48,9 +48,26 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private int _failedEvents;
+        public int FailedEvents
+        {
+            get { return _failedEvents; }
+            set
+            {
+                _failedEvents = value;
+                OnPropertyChanged();
+                OnPropertyChanged("ProcessedEventsOfTotal");
+            }
+        }
+
         public string ProcessedEventsOfTotal
         {
-            get { return String.Format("{0}/{1}", _processedEvents, _totalEvents); }
+            get { 
+                var result = String.Format("{0}/{1}", _processedEvents, _totalEvents);
+                if (FailedEvents > 0)
+                    result = result += String.Format(" ({0} failed)");
+                return result;
+            }
         }
 
         private Geopoint _mapCenter;
@@ -189,8 +206,12 @@ namespace TeslaCamMap.UwpClient.ViewModels
             {
                 TeslaEvents = new ObservableCollection<TeslaEventMapElementViewModel>();
                 result.Result.ForEach(e => TeslaEvents.Add(new TeslaEventMapElementViewModel(e)));
-
-                SelectedFolderLabelText = $"{result.ParsedPath} - {TeslaEvents.Count} events found.";
+                if (result.FailedFiles == 0)
+                    SelectedFolderLabelText = $"{result.ParsedPath} - {TeslaEvents.Count} events found.";
+                else if (result.FailedFiles == 1)
+                    SelectedFolderLabelText = $"{result.ParsedPath} - {TeslaEvents.Count} events found. Failed to read 1 file.";
+                else
+                    SelectedFolderLabelText = $"{result.ParsedPath} - {TeslaEvents.Count} events found. Failed to read {result.FailedFiles} files.";
             }
 
             IsBusy = false;

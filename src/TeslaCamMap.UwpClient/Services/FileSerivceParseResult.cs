@@ -7,6 +7,7 @@ namespace TeslaCamMap.UwpClient.Services
     {
         public List<TeslaEvent> Result { get; set; }
         public string ParsedPath { get; set; }
+        public int FailedFiles { get; set; }
 
     }
 }
