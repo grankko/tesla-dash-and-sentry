@@ -17,6 +17,7 @@
         <converters:BoolAndNullVisibilityConverter x:Key="VisibilityConverter" />
         <converters:EventReasonLabelConverter x:Key="ReasonLabelConverter" />
         <converters:EventReasonToGlyphConverter x:Key="ReasonGlyphConverter" />
+        <converters:PlaybackSpeedConverter x:Key="PlaybackSpeedConverter" />
     </Page.Resources>
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
@@ -99,6 +100,18 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE893;"/>
                     </Button>
                 </StackPanel>
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Margin="5" VerticalAlignment="Center" Text="Playback Speed:" Grid.Column="0" />
+                    <RadioButton GroupName="PlaybackSpeedGroup" Content="1x" IsChecked="{Binding Path=CurrentPlaybackSpeed, Mode=TwoWay, Converter={StaticResource PlaybackSpeedConverter}, ConverterParameter=1}" Grid.Column="1" />
+                    <RadioButton GroupName="PlaybackSpeedGroup" Content="2x" IsChecked="{Binding Path=CurrentPlaybackSpeed, Mode=TwoWay, Converter={StaticResource PlaybackSpeedConverter}, ConverterParameter=2}" Grid.Column="2" />
+                    <RadioButton GroupName="PlaybackSpeedGroup" Content="3x" IsChecked="{Binding Path=CurrentPlaybackSpeed, Mode=TwoWay, Converter={StaticResource PlaybackSpeedConverter}, ConverterParameter=3}" Grid.Column="3" />
+                </Grid>
             </StackPanel>
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>

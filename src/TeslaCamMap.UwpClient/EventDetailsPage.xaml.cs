@@ -56,8 +56,14 @@ namespace TeslaCamMap.UwpClient
             vm.PauseVideo += Vm_PauseVideo;
             vm.LoadSegment += Vm_LoadSegment;
             vm.StepFrame += Vm_StepFrame;
+            vm.ChangePlaybackSpeed += Vm_ChangePlaybackSpeed;
 
             vm.OnNavigated();
+        }
+
+        private void Vm_ChangePlaybackSpeed(object sender, PlaybackSpeedChangedEventArgs e)
+        {
+            _mediaTimelineController.ClockRate = e.NewPlaybackSpeed;
         }
 
         private void Vm_StepFrame(object sender, StepFrameEventArgs e)

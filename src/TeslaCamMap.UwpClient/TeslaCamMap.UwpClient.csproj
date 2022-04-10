@@ -134,6 +134,7 @@
     <Compile Include="Converters\BoolAndNullVisibilityConverter.cs" />
     <Compile Include="Converters\HotSegmentBrushConverter.cs" />
     <Compile Include="Converters\HotSpotMarginConverter.cs" />
+    <Compile Include="Converters\PlaybackSpeedConverter.cs" />
     <Compile Include="Converters\SelectedColorBrushConverter.cs" />
     <Compile Include="Converters\SelectedItemZIndexConverter.cs" />
     <Compile Include="Converters\StringFormatConverter.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="ClientEventArgs\LoadSegmentEventArgs.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ClientEventArgs\StepFrameEventArgs.cs" />
+    <Compile Include="ClientEventArgs\PlaybackSpeedChangedEventArgs.cs" />
     <Compile Include="ViewModels\TeslaEventMapElementViewModel.cs" />
     <Compile Include="ViewModels\VideoPlayerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

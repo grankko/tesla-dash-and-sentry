@@ -34,9 +34,22 @@ namespace TeslaCamMap.UwpClient.ViewModels
             }
         }
 
+        private int _currentPlaybackSpeed;
+        public int CurrentPlaybackSpeed
+        {
+            get => _currentPlaybackSpeed;
+            set
+            {
+                _currentPlaybackSpeed = value;
+                OnPropertyChanged();
+                ChangePlaybackSpeed?.Invoke(this, new PlaybackSpeedChangedEventArgs(_currentPlaybackSpeed));
+            }
+        }
+
         // Events for stuff that needs to happen in the view (for now)
         public event EventHandler PlayVideo;
         public event EventHandler PauseVideo;
+        public event EventHandler<PlaybackSpeedChangedEventArgs> ChangePlaybackSpeed;
         public event EventHandler<StepFrameEventArgs> StepFrame;
         public event EventHandler<LoadSegmentEventArgs> LoadSegment;
 
@@ -87,6 +100,7 @@ namespace TeslaCamMap.UwpClient.ViewModels
 
         public EventDetailsViewModel(TeslaEvent model)
         {
+            CurrentPlaybackSpeed = 1;
 
             NextSegmentCommand = new RelayCommand(NextSegmentCommandExecute, CanNextSegmentCommandExecute);
             PreviousSegmentCommand = new RelayCommand(PreviousSegmentCommandExecute, CanPreviousSegmentCommandExecute);
