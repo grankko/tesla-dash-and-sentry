@@ -1,4 +1,4 @@
-﻿using FFmpegInterop;
+﻿using FFmpegInteropX;
 using System;
 using System.Threading.Tasks;
 using TeslaCamMap.UwpClient.ClientEventArgs;
@@ -22,10 +22,10 @@ namespace TeslaCamMap.UwpClient
 
         // One instance per video seems to work best.
         // A reference to the FFMpegInteropMSS needs to be maintained for the players to be stable.
-        private FFmpegInteropMSS _leftFfmpegInterop;
-        private FFmpegInteropMSS _frontFfmpegInterop;
-        private FFmpegInteropMSS _rightFfmpegInterop;
-        private FFmpegInteropMSS _backFfmpegInterop;
+        private FFmpegMediaSource _leftFfmpegInterop;
+        private FFmpegMediaSource _frontFfmpegInterop;
+        private FFmpegMediaSource _rightFfmpegInterop;
+        private FFmpegMediaSource _backFfmpegInterop;
 
         private MediaTimelineController _mediaTimelineController = new MediaTimelineController();
         private int _currentEstimatedFrameDuration;
@@ -110,12 +110,12 @@ namespace TeslaCamMap.UwpClient
             _mediaTimelineController.Position = TimeSpan.Zero;
         }
 
-        private async Task<FFmpegInteropMSS> CreateMediaSourceAndPlayer(MediaPlayerElement playerElement, FFmpegInteropMSS ffmpegMss, Clip clip)
+        private async Task<FFmpegMediaSource> CreateMediaSourceAndPlayer(MediaPlayerElement playerElement, FFmpegMediaSource ffmpegMss, Clip clip)
         {
             if (ffmpegMss != null)
                 ffmpegMss.Dispose();
 
-            FFmpegInteropConfig conf = new FFmpegInteropConfig();
+            MediaSourceConfig conf = new MediaSourceConfig();
             conf.StreamBufferSize = BufferSizeInBytes;
 
             MediaPlayer player = playerElement.MediaPlayer;
@@ -124,7 +124,7 @@ namespace TeslaCamMap.UwpClient
 
             using (var stream = await clip.ClipFile.OpenAsync(Windows.Storage.FileAccessMode.Read))
             {
-                ffmpegMss = await FFmpegInteropMSS.CreateFromStreamAsync(stream, conf);
+                ffmpegMss = await FFmpegMediaSource.CreateFromStreamAsync(stream, conf);
             }
 
             player.Source = ffmpegMss.CreateMediaPlaybackItem();
